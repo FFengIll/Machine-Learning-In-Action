@@ -1,0 +1,7 @@
+A1	3	104	love
+A2	2	100	love
+A3	1	81	love
+A4	101	10	action
+A5	99	5	action
+A6	98	2	action
+A7	18	90	unknown
