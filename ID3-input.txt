@@ -1,0 +1,5 @@
+ID1	Y	Y	Y
+ID2	Y	Y	Y
+ID3	Y	N	N
+ID4	N	Y	N
+ID5	N	Y	N
