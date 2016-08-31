@@ -1,0 +1,6 @@
+0	alfa	beta
+1	alfa	gamma	delta	sigma
+2	beta	gamma	delta	theta
+3	alfa	beta	gamma	delta
+4	alfa	beta	gamma	theta
+5	alfa	beta	gamma	theta	epsilo
