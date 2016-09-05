@@ -184,10 +184,10 @@ def getRulesFromSet(conseqGroup,freqSet,support,rules, minConf=0.5):
     return
     
     '''
-    here is another process without the 1-element consequence (they can be combined and ignored),
-    because we wish to get the rule with prefix as simple as possible. 
-    (e.g. {1}->{3} and {2}->{3} are enough, so {1,2}->{3} can be ignored)
-    however, this is a standard process in the book.
+    here is another process without the 1-element consequence (they can be combined and ignored), this is a standard process in the book.
+    we have a Theorem:
+    If a rule X -> Y-X does not meet confidence, then  X' -> Y-X' can not meet either, where X' is a subset of X.
+    So we can use the theorem to do prune.
     '''
     if(n> (m+1)):
         tmpGroup = aprioriGen(conseqGroup,m+1)
