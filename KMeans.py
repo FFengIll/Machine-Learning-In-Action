@@ -90,7 +90,7 @@ def previewKMean(clusters,centroids):
     for c in centroids:
         print c
     print "*"*10
-    
+
     #plot the centroids first
     f1.plot(centroids[:,0],centroids[:,1],'k+',markersize=40)
 
@@ -125,14 +125,14 @@ def randKData(m,n,k,minv=0,maxv=100):
 
 '''
 after clustering, divide the dataset and then get all clusters details
-'''    
+'''
 def getClusters(dataset,assment,centroids):
     clusters=[]
-    for i in range(len(centroids)): 
+    for i in range(len(centroids)):
         c = dataset[nonzero(assment[:,0]==i)[0]]
-        clusters.append(c)        
+        clusters.append(c)
     return clusters
-    
+
 '''
 K Means: a algorithm to find out the centroids to stand for the clusters.
 in k means, we randomly choose k centroids, and compute out all clusters;
@@ -195,12 +195,12 @@ the less SSE, the better clustering.
 def SSE(dataset,assment,centroids):
     k=len(centroids)
     distsum=mat(zeros((k,1)))
-    
+
     #in assment, list of pair: nearest centroids id, and distance**2 (no need to compute again)
     for cid in range(k):
         ids = nonzero(assment[:,0].A==cid)[0]
         dists = assment[ids][:,1]
-        distsum[cid] = sum(dists) 
+        distsum[cid] = sum(dists)
     return distsum
 
 '''
@@ -214,7 +214,7 @@ so maybe we can use these ways just in the processing
 bisecting K means: a algorithm make all nodes as one cluster and do bisecting with the one cluster.
 we can continue to do bisecting with one cluster to decrease the SSE until we meet k.
 (WRONG!) PS:we have to do k-means with 2 and then compute the SSE in each loop, and choose the one with largest SSE for the next.
-PS:we have to do k-means with 2 for each clusters, and calculate current global SSE; then we have the least SSE which means we accept the clustring in this loop. 
+PS:we have to do k-means with 2 for each clusters, and calculate current global SSE; then we have the least SSE which means we accept the clustring in this loop.
 '''
 def biKMeans(dataset,k,distMeas=distEuclid):
     #init data structure
@@ -240,7 +240,7 @@ def biKMeans(dataset,k,distMeas=distEuclid):
             #compute new sse
             sse_s = SSE(clusters[i],assment,centroids)
             sse_new = sum(sse_s)
-            
+
             #compute others' sse
             sse_old=0.0
             for j in range(time):
@@ -248,7 +248,7 @@ def biKMeans(dataset,k,distMeas=distEuclid):
                     continue
                 #sse_old += SSE(clusters[j],allassment[j],allcentroids[j])
                 sse_old += allsse[j]
-            
+
             sse_sum = sse_new + sse_old
             if  sse_sum < leastSSE:
                 bestCid=i
@@ -256,11 +256,11 @@ def biKMeans(dataset,k,distMeas=distEuclid):
                 bestCentroids=centroids
                 bestAssment=assment
                 leastSSE = sse_sum
-    
+
         #update all data after choosing
         #get the old cluster
         cluster_old=clusters[bestCid]
-       
+
         #clear old data
         #allsse.remove(allsse[bestCid])
         #clusters.remove(clusters[bestCid])
@@ -278,13 +278,88 @@ def biKMeans(dataset,k,distMeas=distEuclid):
              allsse[spaceid]=bestSSE[cid]
              allcentroids[spaceid] = bestCentroids[cid]
         pass
-        
+
         #a preview of clustering
+        
         temp_clusters= clusters[:time+1]
         temp_centroids= allcentroids[:time+1]
         previewKMean(temp_clusters,temp_centroids)
         
+
     return clusters, allcentroids
+
+def biKMeansAuto(dataset,k=100,distMeas=distEuclid):
+    #init data structure
+    clusters=[None]*k
+    clusters[0]=dataset
+    #print clusters
+    #raw_input()
+    allassment=[None]
+    allcentroids= mat(zeros((k,2)))
+    allsse = mat(zeros((k,1)))
+
+    #do bisecting k means
+    for time in range(1,k,1):
+        leastSSE = inf
+        bestSSE = []
+        bestCentroids = []
+        bestAssment = []
+        bestCid = -1
+
+        #find the best bisecting
+        for i in range(time):
+            assment, centroids= KMeans(clusters[i],2)
+            #compute new sse
+            sse_s = SSE(clusters[i],assment,centroids)
+            sse_new = sum(sse_s)
+
+            #compute others' sse
+            sse_old=0.0
+            for j in range(time):
+                if(i==j):
+                    continue
+                #sse_old += SSE(clusters[j],allassment[j],allcentroids[j])
+                sse_old += allsse[j]
+
+            sse_sum = sse_new + sse_old
+            if  sse_sum < leastSSE:
+                bestCid=i
+                bestSSE=sse_s
+                bestCentroids=centroids
+                bestAssment=assment
+                leastSSE = sse_sum
+
+        #update all data after choosing
+        #get the old cluster
+        cluster_old=clusters[bestCid]
+
+        #clear old data
+        #allsse.remove(allsse[bestCid])
+        #clusters.remove(clusters[bestCid])
+        #allcentroids.remove(allcentroids[bestCid])
+        space = [bestCid, time]
+
+        #update with new data, of course only 2 clusters
+        for cid in range(2):
+             ids = nonzero(bestAssment[:,0].A==cid)[0]
+             cluster_new=cluster_old[ids]
+
+             #update the data: clear(actually replace) the old, and add(actually fill) the new
+             spaceid= space[cid]
+             clusters[spaceid]=cluster_new
+             allsse[spaceid]=bestSSE[cid]
+             allcentroids[spaceid] = bestCentroids[cid]
+        pass
+
+        #a preview of clustering
+        '''
+        temp_clusters= clusters[:time+1]
+        temp_centroids= allcentroids[:time+1]
+        previewKMean(temp_clusters,temp_centroids)
+        '''
+
+    return clusters, allcentroids
+
 
 if __name__ == "__main__":
     #dataset=randKData(50,2,2)
@@ -293,22 +368,22 @@ if __name__ == "__main__":
 
     dataset = file2matrix("KMeans-input.txt")
     #print dataset[0]
-    
+
     '''
     #test with 3 centroids
     centroids=randCent(dataset,2)
     print centroids
     '''
-    
+
     #preview(dataset)
-    
+
     '''
     #test the normal k means
     assment,centroids=KMeans(dataset,4)
-    clusters=getClusters(dataset,assment, centroids)    
+    clusters=getClusters(dataset,assment, centroids)
     '''
 
     #test the bisecting k means
+    k=4
     clusters, centroids=biKMeans(dataset,4)
-    
     previewKMean(clusters,centroids)
