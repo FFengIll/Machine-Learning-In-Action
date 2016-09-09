@@ -15,7 +15,6 @@ def file2set(filename):
         line=line.strip()
         datastr = line.split("\t")
         data = []
-        data.append(1.0)
         for i in datastr:
             data.append(float(i))
         datalist.append(data[0:-1])
@@ -38,7 +37,7 @@ then ws = ( X.T X) ^ (-1)  X.T y
 =>
 but we must have inverse of X
 '''
-def standRegres(xArr, yArr):
+def standRegress(xArr, yArr):
     X = mat(xArr)
     Y = mat(yArr).T
     xTx = X.T * X
@@ -81,22 +80,76 @@ def lwlr(target, xArr, yArr, k=1.0):
     xTx = xM.T * (weights * xM)
     if(linalg.det(xTx)==0.0):
         print "cannot do inverse"
-        return
+        return None
 
     xTxI = xTx.I
     ws = xTxI * (xM.T * (weights * yM))
     return target * ws
 
 '''
-get the yHat values by lwlr
+get the target yHat values using lwlr as regression
 '''
 def lwlrHat(targetArr, xArr, yArr, k=1.0):
     m = shape(targetArr)[0]
     yHat = zeros(m)
     for i in range(m):
-        yHat[i] = lwlr(targetArr[i], xArr, yArr, k)
+        ret = lwlr(targetArr[i], xArr, yArr, k)
+        if(ret == None):
+            return None
+        yHat[i] = ret
     return yHat
         
+'''
+ridge regression is a way to do shrinkage while regress
+we import the lambda to limit the sum(w)
+we import the penalty to reduce the influence of unimportant features (shrinkage)
+feathermore, lambda can help to prevent that the matrix can not do inverse
+=>
+ws= (X.T * X + lambda * I ).I * X.T * y
+=>
+so we need to min(lambda) - data 1 for test, data 2 for w
+'''
+def ridgeRegress(xM, yM, lam=0.2):
+    xTx = xM.T * xM
+    denom = xTx + eye(shape(xM)[1])*lam
+    if(linalg.det(denom) == 0.0):
+        print "can not do inverse"
+        return
+    ws = denom.I * (xM.T * yM)
+    return ws
+
+'''
+ridge regress entry
+we have to find the best lambda by test
+and for computing, we need to do normalization
+=>
+2 normalization method:
+Min-Max normalization: map into [0-1] (new data may influence the min max)
+Z-score normalization: use mean and standard deviation or variance to map Normal Distribution
+=>
+will return the lambda matrix and related ws matrix
+'''
+def ridgeRegressWMat(xArr, yArr):
+    xM = matrix(xArr).T
+    yM = matrix(yArr).T
+
+    #normalize the data
+    yMean = mean(yM, 0)
+    yM = yM - yMean
+    xMean = mean(xM, 0)
+    xVar = var(xM, 0)
+    xM = (xM -xMean) / xVar
+    
+    numTestLam = 30
+    wMat = zeros( (numTestLam, shape(xM)[1]) )
+    lamMat = matrix(range(-10,numTestLam-10)).T
+    for i in range(numTestLam):
+        #PS: the lambda is number of exp()
+        ws = ridgeRegress(xM, yM, exp(i-10))
+        wMat[i,:]= ws.T
+
+    return lamMat, wMat
+
 
 def preview(xArr,yArr,w):
     fig1 = plot.plot(xArr,yArr,'b*')
@@ -108,43 +161,96 @@ def preview(xArr,yArr,w):
 
     plot.show()
 
-def getMatch(x, y, w):
+def OLSValue(w, x):
     fitfunction = np.poly1d(w)
-    yMatch = fitfunction(x)
-    res = corrcoef(y, yMatch)
+    yHat = fitfunction(x)    
+    return yHat
+    
+def getMatch(y, yHat):
+    res = corrcoef(y, yHat)
     return res
 
 
 if __name__=="__main__":
-    #read data
+    #load data set
     xArr, yArr = file2set("VR-input.txt")
-    newX = []
-    for i in xArr:
-        newX.append(i[1])
     print xArr
-    print yArr
-    print newX
-    fig1 = plot.plot(newX,yArr,'b*')
-
+    print yArr   
+    
+    #prepare x data (just store)
+    xTarget = []
+    for i in xArr:
+        xTarget.append(i[1])
+    print xTarget
+    
     #OLS
-    ws = standRegres(xArr, yArr)
-    print ws
-
-    #OLS in NumPy
-    w = OLS(newX,yArr)
-    match = getMatch(newX, yArr, w)
-    print w
-    print match
-    fitfunction = np.poly1d(w)
-    newY = fitfunction(newX)
-    fig2 = plot.plot(newX, newY,'b-')
-
+    if(0):
+        ws = standRegress(xArr, yArr)
+        ws = [ float(v) for v in ws]
+        yHat =  [ws[0] + ws[1] * v for v in xTarget]
+        
+        print "OLS weight:", ws
+        print "OLS Regress Value:", yHat
+        #exit(0)
+    
+    #built-in OLS in NumPy
+    if(1):
+        origin = plot.plot(xTarget,yArr,'b*')
+        
+        w = OLS(xTarget,yArr)
+        yHat = OLSValue(w,xTarget)
+        match = getMatch(yArr, yHat)
+        
+        print "built-in OLS Regress Value:", yHat
+        print "built-in OLS Weight:", w
+        print "built-in OLS Match:", match
+        
+        fig2 = plot.plot(xTarget, yHat,'b-')
+        plot.show()
+        #exit(0)
+        
     #LWLR
-    yHat = lwlrHat(xArr, xArr, yArr,1.0)
-    fig3 = plot.plot(newX, yHat,'r-')
-    yHat = lwlrHat(xArr, xArr, yArr)
-    fig4 = plot.plot(newX, yHat,'g*',0.5)
-    yHat = lwlrHat(xArr, xArr, yArr)
-    fig5 = plot.plot(newX, yHat,'yo',0.03)   
-
-    plot.show()
+    if(0):
+        origin = plot.plot(xTarget,yArr,'b*')
+        print "LWLR origin value:", yArr
+        
+        #now we do the LWLR test with different parameters
+        paraList = [1.0, 0.5, 0.03]
+        markType = ['r-', 'g-', 'y-']
+        
+        for i in range(len(paraList)):
+            yHat = lwlrHat(xArr, xArr, yArr, paraList[i])
+            if(yHat == None):
+                continue
+            print "LWLR regress value", yHat
+            fig3 = plot.plot(xTarget, yHat, markType[i])
+            
+        plot.show()
+    
+    #Ridge Regress
+    if(1):
+        '''
+        We need to regress all features and get the weights to do next analysis.
+        Here we only use one as demo.
+        The plot will show the weight changing with log(lambda).
+        '''
+        lamMat ,wMat = ridgeRegressWMat(xArr[:,1], yArr)
+        print "Ridge Lambda:",lamMat
+        print "Ridge W:", wMat
+        plot.plot(lamMat, wMat,'yo',0.03)   
+            
+        '''
+        m,n = shape(xArr)
+        lamList = []
+        wList = []
+        for i in range(n):
+            lamMat ,wMat = ridgeRegressWMat(xArr[:,i], yArr)
+            print "Ridge Lambda:",lamMat
+            print "Ridge W:", wMat
+            lamList.append(lamMat)
+            wList.append(wMat)
+            plot.plot(lamMat, wMat,'yo',0.03)   
+        '''
+        
+        plot.show()        
+        #exit(0)
