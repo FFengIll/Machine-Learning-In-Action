@@ -27,6 +27,12 @@ def file2set(filename):
     return dataset, labelset
 
 '''
+check the rss error
+'''    
+def rssError(yArr, yHatArr):
+    return ( (yArr-yHatArr)**2 ).sum()
+    
+'''
 general regression for 2 dimensional data,
 aka, OLS (Ordinary Least Square)
 =>
@@ -150,7 +156,48 @@ def ridgeRegressWMat(xArr, yArr):
 
     return lamMat, wMat
 
+def regular(xM):
+    xMean = mean(xM, 0)
+    xVar = var(xM, 0)
+    xM = (xM -xMean ) / xVar
+    return xM
 
+def stageWiseRegress(xArr, yArr, eps=0.01, numIt=100):
+    xMat = mat(xArr)
+    yMat = mat(yArr).T
+    yMean = mean(yMat,0)
+
+    #yMat = yMat - yMean
+    #xMat = regular(xMat)
+    
+    m,n = shape(xMat)
+    
+    res = zeros((numIt,n))   
+    ws = zeros((n,1))
+    wsTest = ws.copy()
+    wsMax = ws.copy()
+    
+    #loop times
+    for i in range(numIt):
+        print ws.T
+        lowestErr = inf;
+        
+        #for each feature, we need to test
+        for j in range(n):
+            #change:eps or -eps, so the step eps will influence the performance
+            for sign in [-1,1]:
+                wsTest = ws.copy()
+                wsTest[j] += eps*sign
+                yTest = xMat * wsTest
+                rssErr = rssError(yMat.A, yTest.A)
+            if rssErr < lowestErr:
+                lowestErr = rssErr
+                wsMax = wsTest
+        ws = wsMax.copy()
+        res[i,:]=ws.T
+        
+    return res
+    
 def preview(xArr,yArr,w):
     fig1 = plot.plot(xArr,yArr,'b*')
 
@@ -194,7 +241,7 @@ if __name__=="__main__":
         #exit(0)
     
     #built-in OLS in NumPy
-    if(1):
+    if(0):
         origin = plot.plot(xTarget,yArr,'b*')
         
         w = OLS(xTarget,yArr)
@@ -228,7 +275,7 @@ if __name__=="__main__":
         plot.show()
     
     #Ridge Regress
-    if(1):
+    if(0):
         '''
         We need to regress all features and get the weights to do next analysis.
         Here we only use one as demo.
@@ -252,5 +299,16 @@ if __name__=="__main__":
             plot.plot(lamMat, wMat,'yo',0.03)   
         '''
         
+        plot.show()    
+        
+    #Stage Wise Regress
+    if(0):
+        xArr, yArr = file2set("VR-input2.txt")
+        eps = 0.01
+        numIt = 500
+        wMat = stageWiseRegress(xArr, yArr, eps, numIt)
+        #print "Stage Wise W:", wMat
+        exit(0)
+        plot.plot(lamMat, wMat,'yo',0.03)   
+            
         plot.show()        
-        #exit(0)
