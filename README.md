@@ -1,12 +1,17 @@
-# MachineLearning
+# Machine Learning
 Machine Learning in Action
 
 * Classification
-	* Decision tree
+	* KNN
+	* Decision Tree
 * Regression
+	* OLS (Ordinary Least Squares, Linear Regression)
+	* LWLR (Locally Weighted Linear Regression)
+	* Shrink Regression (Ridge, Lasso, Stage Wise)
+	* CART (Classification And Regression Trees)
 * Unsupervised learning
 	* Clustering (Unsupervised classification)
-	* Association analysis (Association rule learning)
+	* Association Analysis (Association rule learning)
 	* FP-Growth (An Efficient Frequency Finder in Association rule learning)
 
 # Classification
@@ -32,7 +37,68 @@ ID3算法是用于决策树的一种贪心算法。
 该算法通过计算香农信息熵来获取最优的特征，从而对数据进行分类。
 所谓最优特征，即是在所有特征中，能够得到最优信息增益的一个
 
-# Regression
+# Linear Regression
+
+## Brief
+I will not do too much explanation on linear regression algorithm,
+but explain the core idea in all of them here.
+
+Whatever the algorithm we use, we just wish to get the of the data.
+So 
+
+## OLS (Ordinary Least Squares, Linear Regression)
+## LWLR (Locally Weighted Linear Regression)
+## Ridge Regression
+## Lasso Regression
+## Stage Wise Regression
+
+## Summary
+
+
+# Tree Regression
+
+## CART
+Classification And Regression Trees will give regression by slice data into a tree structure.
+The core idea is that slice data (**especially the Non-Linear data**) into more simple subset,
+and then use the linear regression for each subset.
+
+CART can support the complex data (global non-linear but local linear) well and each sub-mission can be small, easy and local.
+And here we give it:
+* find the best value to do the split
+	* traverse all features
+	* for each features, get the feasible value as a split set
+	* for each split value in the split set, try to split and compute the error of subset
+	* if the sum of the 2 subset error is less than the origin one, update the status
+* then we have the best split feature and value, so split the dataset into 2 subsets with it
+* do the find and split the new set recursively. The terminate is any of the conditions bellow: (avoid overfitting)
+	* error decline is not obvious, aka under **tolerance error**.
+	* the subset is under **tolerance scale** (aka number of sample).
+* then we have the CART of the dataset
+
+CART work well, but it often cause overfitting when the tree nodes are to many, so we need pruning.
+Here comes 2 ways to do it: prepruning and postpruning.
+
+The conditions above are prepruning:
+* if error decline little, the split can help little;
+* if samples are not enough, the regression will not work well.
+
+And we can use testing set and training set to complete cross validation as postpruning:
+
+分类回归树（CART）采用了数据集划分的思想，来对数据集进行分类以用于回归，即：
+将数据集划分为多个简易的，可线性回归的子集，进而进行局部的线性回归。
+这样非常有益于处理复杂的非线性问题（全局非线性，无法进行全局拟合，但局部线性，可以局部线性拟合）。
+
+CART的基本算法如下：
+* 试探最优的划分特征及特征值
+	* 遍历全部特征
+	* 对每一个特征，获取划分集合，即所有备选特征值
+	* 使用每一个特征值进行集合划分，并计算子集的偏差
+	* 如果子集的偏差之和低于原始集合，则更新状态
+* 而后即可获得最优的划分特征及特征值，并进行数据集划分
+* 通过递归的对每一个新的数据集进行划分，即可完成CART的构建. 其递归结束条件为以下任一（防止过拟合）：
+	* 误差的下降不明显，即减少量低于**容忍误差**。
+	* 子集中的样本数目低于**容忍样本数目**。
+* 最后，完成CART构建，即对原始数据的划分。
 
 # Unsupervised learning
 
@@ -114,4 +180,58 @@ Apriori算法一般包含两个步骤：
 	* 如：N中，X+Y = N，如果X->Y不可置信, 则 X - delta -> Y + delta 亦不可置信，其中delta属于X。 
 
 ## FP-Growth
-(Now the FP-Growth implement is not good, because I meet a trouble when some of the support is equal in the item sort)
+~~(Now the FP-Growth implement is not good, because I meet a trouble when some of the support is equal in the item sort)~~
+
+(I found I have misunderstand the FP-Tree's application - each time we do a new analysis, we should re-build a FP-Tree and scan it in recursion.
+That is saying if some item in the FP-Tree may have same support, then the order is undefined, 
+but we can rebuild the tree later to find which one, same upport in last tree, is more frequent)
+
+FP-Growth is an efficient algorithm to find out the frequent item in the dataset.
+It is different with Apriori, because FP-Growth should and only should scan the dataset twice!
+That means we can considerably reduce the dependency of dataset and time cost (especially in characters/string)
+
+FP-Growth bases on the FP-Tree, aka Frequency Pattern Tree, and extract the frequent item from the FP-Tree according to the conditional pattern.
+FP-Tree is built and update node by node, that is why we call it Growth. 
+
+Then I will introduce FP-Growth in 2 aspects:
+* FP-Tree building. It is the core of the algorithm.
+	* Analyse the dataset, get the support (frequency) of each item in each record (the first data scan) 
+	* By the given min support, filter the items
+	* Scan all record and build the FP-Tree (the second data scan).
+		* Fileter and sort the items in record by item support (from large to little) - to avoid divergency (e.g. xyz, zyx may cause trouble without sort)
+		* From the empty tree root node, while scan the record, if the item node exist, update the local support count attribute, else add a new node.  
+		Then we will have all ordered path in the tree.
+		* For some reason, we may build a header table - all item in the header and link to a list which is a link list of the item in the tree.  
+		It will help us to find the items quickly.
+	* Now we have the tree and the header table  
+* FP-Growth
+	* If an item is frequent, its prefix in one FP-Tree may be frequent too.  
+	* So we scan from all item (from little to large) - each item is a base pattern and we get its all prefixs as conditional pattern in the tree.
+		* Each time we scan the item, we append it to current set (empty set at init) as a new frequency set, and save it - so we call the process as **_Tree Mine_**.
+		* Then we use conditional pattern to build a new tree - FP conditional tree (we have min support!)
+		* If the tree is not empty, go on scan and mine the frequency set. (**_It is a recursion_**) 
+
+
+FP-Growth算法是用于发掘频繁项集的高效算法。
+
+相比于Apriori算法，FP仅需要对数据集进行两次扫描，因此其对数据的依赖会更低，同时效率会高出很多（一般会出现数量级的超出），特别的，在字符处理上，FP的表现更佳。
+
+FP-Growth算法的核心是树状结构的，即频繁模式树（FP-Tree），在算法中，频繁项的抽取是直接依赖于模式树中的条件基的（后续说明）。
+而FP-Tree的构建和更新是逐个节点完成的，如同树的生长，故而称之为FP-Growth。
+
+FP-Growth算法主要包含了两个方面：
+* FP-Tree的构建。
+	* 分析数据集，获取每条记录中的每项的支持度（以数据集为字符串记录为例）（第一次扫描）
+	* 根据最小支持度过滤元素
+	* 扫描数据，并构建FP-Tree（第二次扫描）
+		* 对每条记录进行过滤和排序（支持度从大到小），进而防止顺序不同而出现分歧；
+		* 以空节点为根（具体实现可不同），进行树的生长。扫描记录时，若节点存在，则更新局部支持度，继续探索子节点；若节点不存在，则新建子节点；
+		* 在树的生长期间，需要创建头结点表——将所有有效元素存储与头表中，每一个元素链接到一个链表之中，链表为FP-Tree中的全部的这一个元素项（有助于加速搜索）；
+		* 当全部记录扫描完毕，即可得到树及头表。
+* FP-Growth。（递归进行）（看看代码，辅助理解）
+	* 如果某一元素是频繁的，其在树中的前缀则也可能是频繁的；
+	* 我们可以循环扫描所有频繁单项（即头表中的元素）（支持度由小到大，因为大支持度一般更靠近树根）（这是一个挖掘树中信息的过程）。  
+	每一个元素视作模式基，其在树中的全部前缀即为条件模式；
+		* 每当我们扫描一个元素，则将其加入当前集合中，该集合即一个新的频繁项集；
+		* 而后，获取该元素条件模式，并意条件模式作为局部数据集，构建FP-Conditional Tree；
+		* 如果新的条件树存在，则可以递归的对频繁项集进行挖掘；
