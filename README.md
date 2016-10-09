@@ -24,7 +24,7 @@ use Euclid distance of data features to do classification
 基于欧式距离计算特征的差异进行数据分类
 * 需要同全体样本进行计算分析
 * 需要对各个特征进行归一化，以确保准确性
-* 简单有效，但计算量较大
+* 简单有效，但各个步骤的计算量都较大
 
 ## ID3 (apply into Decision Tree)
 
@@ -35,7 +35,11 @@ It will calculate the **Shannon Entropy** to get the best features with the best
 ID3算法是用于决策树的一种贪心算法。
 
 该算法通过计算香农信息熵来获取最优的特征，从而对数据进行分类。
-所谓最优特征，即是在所有特征中，能够得到最优信息增益的一个
+所谓最优特征，即是在所有特征中，能够得到最优信息增益的一个。
+
+PS：香农熵越大，意味着信息越丰富；
+香农熵越小，则信息越明确。
+最优信息增益，即分类使得整体熵下降，信息被明确划分。
 
 # Linear Regression
 
@@ -43,10 +47,11 @@ ID3算法是用于决策树的一种贪心算法。
 I will not do too much explanation on linear regression algorithm,
 but explain the core idea in all of them here.
 
-Whatever the algorithm we use, we just wish to get the of the data.
-So 
+Whatever the algorithm we use, we just wish to get the trend of the data.
+So we should take care of 2 points: overfit will give too much info and cause model complex;
+underfit may lose the accuracy (simple model), then be hard to use.
 
-## OLS (Ordinary Least Squares, Linear Regression)
+## OLS (Ordinary Least Squares / Linear Regression)
 ## LWLR (Locally Weighted Linear Regression)
 ## Ridge Regression
 ## Lasso Regression
