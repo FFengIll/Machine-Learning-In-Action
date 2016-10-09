@@ -4,7 +4,7 @@ from operator import *
 import matplotlib
 import matplotlib.pyplot as plot
 
-def file2matrix(filename):
+def loadData(filename):
     input=open(filename)
     classvec=[]
     dataset=[]
@@ -13,18 +13,18 @@ def file2matrix(filename):
         line=line.strip()
         datalist = line.split('\t')
         
-        datalist[1]=int(datalist[1])
-        datalist[2]=int(datalist[2])
-
         #last data is the class
-        dataset.append(datalist[1:-1])
-        classvec.append(datalist[-1])
+        data = [float(v) for v in datalist[1:-1]]
+        type = datalist[-1]
+        
+        dataset.append(data)
+        classvec.append(type)
         
     dataset = array(dataset)
     classvec = array(classvec)
     return dataset, classvec
 
-def autonorm(sample):
+def normalize(sample):    
     #arg = 0 means get min or max in collumn
     minvals= sample.min(0)
     maxvals=sample.max(0)
@@ -45,10 +45,12 @@ def autonorm(sample):
     
     return normSample, deltas, minvals
     
-    
-def classify1(input, sample, label, k=3):
-    pass
-    
+def preview(sample):
+    n,m = sample.shape
+    fig=plot.figure()
+    f1=fig.add_subplot(111)
+    f1.scatter(sample[:,0], sample[:,1])
+    plot.show()
 
 def classify0(input, sample, label, k=3):
     #getDistance(sample[0], sample[1])
@@ -80,19 +82,20 @@ def classify0(input, sample, label, k=3):
     #choose the best  
     print classcount
 
-def preview(sample):
-    n,m = sample.shape
-    fig=plot.figure()
-    f1=fig.add_subplot(111)
-    f1.scatter(sample[:,0], sample[:,1])
-    plot.show()
-
+def classify1(input, sample, label, k=3):
+    pass
 
 if __name__ == "__main__":
-    matrix, classvec = file2matrix("KNN-input.txt")
+    matrix, classvec = loadData("KNN-input.txt")
     print matrix
     print classvec
-    matrix, deltas, minvals=autonorm(matrix)
+    
+    '''
+    We need to do normalization, 
+    the value distribution of each feature will influence the distance seriously
+    '''
+    matrix, deltas, minvals=normalize(matrix)
     print matrix
     #preview(matrix)
+    
     classify0(matrix[-1], matrix, classvec)

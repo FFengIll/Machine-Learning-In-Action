@@ -5,15 +5,7 @@ import matplotlib
 import matplotlib.pyplot as plot
 from math import log
 
-def unify(data):
-    for i in range(data.__len__()):
-        if data[i]=='Y':
-            data[i]=1
-        elif data[i]=='N':
-            data[i] = 0
-    return data     
-
-def file2matrix(filename):
+def loadData(filename):
     input=open(filename)
     classvec=[]
     dataset=[]
@@ -22,18 +14,19 @@ def file2matrix(filename):
         line=line.strip()
         datalist = line.split('\t')
 
-        datalist = unify(datalist)
-        
         #last data is the class
-        dataset.append(datalist[1:-1])
-        classvec.append(datalist[-1])
+        data = [v for v in datalist[1:-1]]
+        type = datalist[-1]
         
-    dataset = array(dataset)
-    classvec = array(classvec)
+        dataset.append(data)
+        classvec.append(type)
+        
+    dataset = dataset
+    classvec = classvec
     return dataset, classvec
 
 def calcShannonEnt(dataset):
-    n, m = dataset.shape
+    n = len(dataset)
     labelCount={}
     for data in dataset:
         curlabel=data[-1]
@@ -43,39 +36,12 @@ def calcShannonEnt(dataset):
     for key in labelCount:
         prob= float(labelCount[key])/n
         mid = prob * log(prob, 2)
-        shannonEnt -= mid 
+        shannonEnt += -mid 
 
     return shannonEnt 
 
 def classify0(input, sample, label, k=3):
-    #getDistance(sample[0], sample[1])
-
-    #shape means it is a N * M matrix
-    dataSetSize= sample.shape[0]
-    diffMat= tile(input, (dataSetSize,1)) - sample
-    print diffMat
-    sqDiffMat= diffMat**2
-    sqDistance= sqDiffMat.sum(axis=1)
-    print sqDistance
-    distanceM= sqDistance**0.5
-    print distanceM
-    
-    #internal sort
-    #distanceM.sort()
-    print distanceM
-    #return the index of the result of sort
-    sortDisIndex= distanceM.argsort()
-    print sortDisIndex
-    
-    classcount={}
-    for i in range(k):
-        #use sort index to get label
-        unlabel= label[ sortDisIndex[i] ]
-        #use dict to store the count of label
-        classcount[unlabel]=classcount.get(unlabel,0) + 1
-    
-    #choose the best  
-    print classcount
+    pass
 
 def splitDataSet(dataset, axis, value):
     retSet=[]
@@ -83,11 +49,15 @@ def splitDataSet(dataset, axis, value):
         #match axis value first
         if data[axis]==value:
             #split the axis data
-            mid= data[:axis]
-            mid.extend(data[axis+1:])
-            retSet.append (mid)
+            newdata = data[:axis] + data[axis+1:] 
+            #newdata.extend(  )
+            retSet.append (newdata)
     return retSet
 
+'''
+choose the best feature to split the dataset.
+this feature will give the best entropy gain which means data classification is clear 
+'''
 def chooseBestSplit(dataset):
     #feature number except the result one
     featureNum = len(dataset[0])
@@ -98,19 +68,34 @@ def chooseBestSplit(dataset):
     bestFeature = -1
     bestGain = 0.0
 
+    total = float(len(dataset))
+
     for i in range(featureNum):
         featureList = [ data[i] for data in dataset]
         uniFeature = set (featureList)
         print uniFeature
+        
+        newEntropy = 0.0
+        for val in uniFeature:
+            subDataset = splitDataSet(dataset,i,val)
+            prob = len(subDataset) / total
+            newEntropy += prob * calcShannonEnt(subDataset)
 
+        tmpGain = baseEnt - newEntropy
+        if(tmpGain > bestGain):
+            bestGain = tmpGain
+            bestFeature = i
+    
+    return bestFeature
 
 if __name__=="__main__":
-    sample, classvec = file2matrix("ID3-input.txt")
-    print sample
-    print classvec
+    sample, classvec = loadData("ID3-input.txt")
+    print "sample", sample
+    print "classification", classvec 
     #preview(matrix)
     #classify0(sample[-1], sample, classvec)
     #print sample**2
     print calcShannonEnt(sample)
-    chooseBestSplit(sample)
+    fid = chooseBestSplit(sample)
+    print fid
     
