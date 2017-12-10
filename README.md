@@ -1,20 +1,34 @@
-# Machine Learning
-Machine Learning in Action
+# Machine Learning in Action
 
-* Classification
+# Abstract
+A note from **Machine Learning in Action**.  
+Context may not follow the list, and English go ahead Chinese.
+
+本文参考文献：《机器学习实战》。  
+正文可能并未按照目录书写。全文各段落英文在前，中文在后。
+
+# List
+* [Classification （分类）](#Classification)
 	* KNN
 	* Decision Tree
-* Regression
-	* OLS (Ordinary Least Squares, Linear Regression)
-	* LWLR (Locally Weighted Linear Regression)
-	* Shrink Regression (Ridge, Lasso, Stage Wise)
+		* ID3
+* [Regression （回归）](#Regression)
+	* Linear Regression
+		* OLS (Ordinary Least Squares)
+		* LWLR (Locally Weighted Linear Regression)
+	* Shrink Regression （收缩回归）
+		* Ridge （岭回归）
+		* Lasso （套索回归）
+		* Stage Wise （逐步回归）
 	* CART (Classification And Regression Trees)
-* Unsupervised learning
-	* Clustering (Unsupervised classification)
-	* Association Analysis (Association rule learning)
-	* FP-Growth (An Efficient Frequency Finder in Association rule learning)
+* [Unsupervised learning （无监督）](#Unsupervised)
+	* Clustering （聚类）
+		* K-Means
+		* Bisecting K-Means
+	* Association Analysis （关联规则学习）
+		* FP-Growth （频繁项快速发掘）
 
-# Classification
+# Classification <h2 id="Classification"/>
 ## KNN (K Nearest Neighbor)
 use Euclid distance of data features to do classification
 * need to calculate with all samples
@@ -41,7 +55,8 @@ PS：香农熵越大，意味着信息越丰富；
 香农熵越小，则信息越明确。
 最优信息增益，即分类使得整体熵下降，信息被明确划分。
 
-# Linear Regression
+# Linear Regression <h2 id="Regression"/>
+
 
 ## Brief
 I will not do too much explanation on linear regression algorithm,
@@ -51,17 +66,20 @@ Whatever the algorithm we use, we just wish to get the trend of the data.
 So we should take care of 2 points: overfit will give too much info and cause model complex;
 underfit may lose the accuracy (simple model), then be hard to use.
 
-## OLS (Ordinary Least Squares / Linear Regression)
+## OLS (Ordinary Least Squares)
+
 ## LWLR (Locally Weighted Linear Regression)
+
 ## Ridge Regression
+
 ## Lasso Regression
+Lasso（Least Absolute Shrinkage and Selection Operator）, somehow like the Ridge but use absolute value.
 ## Stage Wise Regression
 
 ## Summary
 
 
 # Tree Regression
-
 ## CART
 Classification And Regression Trees will give regression by slice data into a tree structure.
 The core idea is that slice data (**especially the Non-Linear data**) into more simple subset,
@@ -105,7 +123,7 @@ CART的基本算法如下：
 	* 子集中的样本数目低于**容忍样本数目**。
 * 最后，完成CART构建，即对原始数据的划分。
 
-# Unsupervised learning
+# Unsupervised learning <h2 id="Unsupervised"/>
 
 ## K-Means
 As a Clustering Algorithm, K-Means try to use the centroids to stand for the clusters - 
