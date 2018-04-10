@@ -1,34 +1,38 @@
 # Machine Learning in Action
 
 # Abstract
-A note from **Machine Learning in Action**.  
+A note from **Machine Learning in Action**.
+
 Context may not follow the list, and English go ahead Chinese.
 
-本文参考文献：《机器学习实战》。  
-正文可能并未按照目录书写。全文各段落英文在前，中文在后。
+本文参考文献：《机器学习实战》。
+
+正文可能并未按照目录书写。全文各段落英文在前，中文在后。
 
 # List
-* [Classification （分类）](#Classification)
-	* KNN
-	* Decision Tree
-		* ID3
-* [Regression （回归）](#Regression)
-	* Linear Regression
-		* OLS (Ordinary Least Squares)
-		* LWLR (Locally Weighted Linear Regression)
-	* Shrink Regression （收缩回归）
-		* Ridge （岭回归）
-		* Lasso （套索回归）
-		* Stage Wise （逐步回归）
-	* CART (Classification And Regression Trees)
-* [Unsupervised learning （无监督）](#Unsupervised)
-	* Clustering （聚类）
-		* K-Means
-		* Bisecting K-Means
-	* Association Analysis （关联规则学习）
-		* FP-Growth （频繁项快速发掘）
+- [Machine Learning in Action](#machine-learning-in-action)
+- [Abstract](#abstract)
+- [List](#list)
+- [Classification](#classification)
+	- [KNN (K Nearest Neighbor)](#knn-k-nearest-neighbor)
+	- [ID3 (apply into Decision Tree)](#id3-apply-into-decision-tree)
+- [Linear Regression](#linear-regression)
+	- [Brief](#brief)
+	- [OLS (Ordinary Least Squares)](#ols-ordinary-least-squares)
+	- [LWLR (Locally Weighted Linear Regression)](#lwlr-locally-weighted-linear-regression)
+	- [Ridge Regression](#ridge-regression)
+	- [Lasso Regression](#lasso-regression)
+	- [Stage Wise Regression](#stage-wise-regression)
+	- [Summary](#summary)
+- [Tree Regression](#tree-regression)
+	- [CART](#cart)
+- [Unsupervised learning](#unsupervised-learning)
+	- [K-Means](#k-means)
+	- [Bisecting K-Means](#bisecting-k-means)
+	- [Apriori Algorithm](#apriori-algorithm)
+	- [FP-Growth](#fp-growth)
 
-# Classification <h2 id="Classification"/>
+# Classification
 ## KNN (K Nearest Neighbor)
 use Euclid distance of data features to do classification
 * need to calculate with all samples
@@ -55,7 +59,7 @@ PS：香农熵越大，意味着信息越丰富；
 香农熵越小，则信息越明确。
 最优信息增益，即分类使得整体熵下降，信息被明确划分。
 
-# Linear Regression <h2 id="Regression"/>
+# Linear Regression
 
 
 ## Brief
@@ -63,10 +67,17 @@ I will not do too much explanation on linear regression algorithm,
 but explain the core idea in all of them here.
 
 Whatever the algorithm we use, we just wish to get the trend of the data.
-So we should take care of 2 points: overfit will give too much info and cause model complex;
-underfit may lose the accuracy (simple model), then be hard to use.
+So we should take care of 2 points: 
+* overfit will give too much info and cause model complex;
+* underfit may lose the accuracy (simple model), then be hard to use.
+
+线性回归的核心理念是：通过已有数据，获取数据的趋势情况，应用于预测、验证、评估等场景中。
+在线性回归中，需要特别注意两点：
+* 过拟合，会导致信息量过于丰富，进而使得模型过于复杂（如因素或特征过多）。
+* 欠拟合，其模型会较为简单，但相应的也就可能使得精读丢失严重，而无法使用。
 
 ## OLS (Ordinary Least Squares)
+所谓最小二乘法
 
 ## LWLR (Locally Weighted Linear Regression)
 
@@ -74,6 +85,7 @@ underfit may lose the accuracy (simple model), then be hard to use.
 
 ## Lasso Regression
 Lasso（Least Absolute Shrinkage and Selection Operator）, somehow like the Ridge but use absolute value.
+
 ## Stage Wise Regression
 
 ## Summary
@@ -123,7 +135,7 @@ CART的基本算法如下：
 	* 子集中的样本数目低于**容忍样本数目**。
 * 最后，完成CART构建，即对原始数据的划分。
 
-# Unsupervised learning <h2 id="Unsupervised"/>
+# Unsupervised learning
 
 ## K-Means
 As a Clustering Algorithm, K-Means try to use the centroids to stand for the clusters - 

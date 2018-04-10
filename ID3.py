@@ -1,69 +1,77 @@
-import sys,os
+import sys
+import os
 from numpy import *
 from operator import *
 import matplotlib
 import matplotlib.pyplot as plot
 from math import log
 
+
 def loadData(filename):
-    input=open(filename)
-    classvec=[]
-    dataset=[]
-    
+    input = open(filename)
+    classvec = []
+    dataset = []
+
     for line in input:
-        line=line.strip()
+        line = line.strip()
         datalist = line.split('\t')
 
-        #last data is the class
+        # last data is the class
         data = [v for v in datalist[1:-1]]
         type = datalist[-1]
-        
+
         dataset.append(data)
         classvec.append(type)
-        
+
     dataset = dataset
     classvec = classvec
     return dataset, classvec
 
+
 def calcShannonEnt(dataset):
     n = len(dataset)
-    labelCount={}
+    labelCount = {}
     for data in dataset:
-        curlabel=data[-1]
-        labelCount[curlabel] = labelCount.get(curlabel,0) + 1
+        curlabel = data[-1]
+        labelCount[curlabel] = labelCount.get(curlabel, 0) + 1
 
-    shannonEnt=0.0
+    shannonEnt = 0.0
     for key in labelCount:
-        prob= float(labelCount[key])/n
+        prob = float(labelCount[key]) / n
         mid = prob * log(prob, 2)
-        shannonEnt += -mid 
+        shannonEnt += -mid
 
-    return shannonEnt 
+    return shannonEnt
+
 
 def classify0(input, sample, label, k=3):
     pass
 
+
 def splitDataSet(dataset, axis, value):
-    retSet=[]
+    retSet = []
     for data in dataset:
-        #match axis value first
-        if data[axis]==value:
-            #split the axis data
-            newdata = data[:axis] + data[axis+1:] 
+        # match axis value first
+        if data[axis] == value:
+            # split the axis data
+            newdata = data[:axis] + data[axis + 1:]
             #newdata.extend(  )
-            retSet.append (newdata)
+            retSet.append(newdata)
     return retSet
+
 
 '''
 choose the best feature to split the dataset.
 this feature will give the best entropy gain which means data classification is clear 
 '''
+
+
 def chooseBestSplit(dataset):
-    #feature number except the result one
+    # feature number except the result one
     featureNum = len(dataset[0])
     featureNum -= 1
-    
-    #calc base Shannon Entropy
+
+    # calc base Shannon Entropy
     baseEnt = calcShannonEnt(dataset)
     bestFeature = -1
     bestGain = 0.0
@@ -71,13 +79,13 @@ def chooseBestSplit(dataset):
     total = float(len(dataset))
 
     for i in range(featureNum):
-        featureList = [ data[i] for data in dataset]
-        uniFeature = set (featureList)
+        featureList = [data[i] for data in dataset]
+        uniFeature = set(featureList)
         print uniFeature
-        
+
         newEntropy = 0.0
         for val in uniFeature:
-            subDataset = splitDataSet(dataset,i,val)
+            subDataset = splitDataSet(dataset, i, val)
             prob = len(subDataset) / total
             newEntropy += prob * calcShannonEnt(subDataset)
 
@@ -85,17 +93,17 @@ def chooseBestSplit(dataset):
         if(tmpGain > bestGain):
             bestGain = tmpGain
             bestFeature = i
-    
+
     return bestFeature
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     sample, classvec = loadData("ID3-input.txt")
     print "sample", sample
-    print "classification", classvec 
-    #preview(matrix)
+    print "classification", classvec
+    # preview(matrix)
     #classify0(sample[-1], sample, classvec)
-    #print sample**2
+    # print sample**2
     print calcShannonEnt(sample)
     fid = chooseBestSplit(sample)
     print fid
-    
