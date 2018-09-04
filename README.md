@@ -16,6 +16,10 @@ Context may not follow the list, and English go ahead Chinese.
 - [Classification](#classification)
 	- [KNN (K Nearest Neighbor)](#knn-k-nearest-neighbor)
 	- [ID3 (apply into Decision Tree)](#id3-apply-into-decision-tree)
+	- [Naive Bayes](#naive-bayes)
+- [SVM (Support Vector Machine)](#svm-support-vector-machine)
+- [AdaBoost](#adaboost)
+- [Logistic Regressive](#logistic-regressive)
 - [Linear Regression](#linear-regression)
 	- [Brief](#brief)
 	- [OLS (Ordinary Least Squares)](#ols-ordinary-least-squares)
@@ -59,8 +63,22 @@ PS：香农熵越大，意味着信息越丰富；
 香农熵越小，则信息越明确。
 最优信息增益，即分类使得整体熵下降，信息被明确划分。
 
-# Linear Regression
+## Naive Bayes
+基于统计事实和概率的分类算法。核心是贝叶斯定理，具有较强的模型可解释性。
 
+# SVM (Support Vector Machine)
+一个（个人认为）“玄之又玄”的算法，核心是kernel算子的选用（使得数据低维非线性而高维线性可分割）。
+
+可用于模式识别，回归，分类。
+
+# AdaBoost
+通过训练多个弱分类器，从而整合，形成具有强分类效果的迭代算法。
+
+弱分类器是指分类效果相对单一，使用部分测试集的分类模型，一般通过（加权）投票表决的方式整合。
+
+# Logistic Regressive
+
+# Linear Regression
 
 ## Brief
 I will not do too much explanation on linear regression algorithm,
