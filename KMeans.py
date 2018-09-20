@@ -98,8 +98,8 @@ def previewKMean(clusters, centroids):
     k = centroids.shape[0]
 
     for c in centroids:
-        print c
-    print "*" * 10
+        print(c)
+    print("*" * 10)
 
     # plot the centroids first
     f1.plot(centroids[:, 0], centroids[:, 1], 'k+', markersize=40)
@@ -127,7 +127,7 @@ def randKData(m, n, k, minv=0, maxv=100):
     delta = int((maxv - minv) / k)
     for d in range(minv, maxv, delta):
         tmp = randData(int(m / k), n, d, d + delta)
-        print tmp
+        print(tmp)
 
         dataset.extend(tmp)
 

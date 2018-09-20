@@ -29,7 +29,7 @@ def loadData(filename):
         line = line.strip().split('\t')
 
         # convert to float by map method
-        datalist = map(float, line)
+        datalist = list(map(float, line))
 
         # last data is the class
         dataset.append(datalist)
@@ -145,21 +145,21 @@ def viewTree(node, allsplit, tab=0):
         val = node['Value']
         allsplit.append((feat, val))
 
-        print "\t" * tab,
-        print "Feat:%d Value:%f" % (feat, val)
+        print("\t" * tab, end=' ')
+        print("Feat:%d Value:%f" % (feat, val))
 
         viewTree(node['left'], allsplit, tab + 1)
         viewTree(node['right'], allsplit, tab + 1)
 
     else:
-        print "\t" * tab,
-        print node
+        print("\t" * tab, end=' ')
+        print(node)
 
 
 def preview(dataset, cartTree):
     allsplit = []
     viewTree(tree, allsplit)
-    print allsplit
+    print(allsplit)
 
     plot.plot(dataset[:, 0:-1], dataset[:, -1], 'g+')
     maxval = max(dataset[:, -1])

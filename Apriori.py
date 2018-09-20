@@ -14,7 +14,7 @@ def translate(src):
 
     dest = []
     for i in src:
-        if not mapping.has_key(i):
+        if i not in mapping:
             mapping[i] = mappingid
             mappingid += 1
 
@@ -28,7 +28,7 @@ def re_translate(src):
 
     dest = []
     for i in src:
-        if not mapping.has_key(i):
+        if i not in mapping:
             mapping[i] = mappingid
             mappingid += 1
 
@@ -78,7 +78,7 @@ def createC1(dataset):
                 C1.append([item])
 
     C1.sort()
-    return map(frozenset, C1)
+    return list(map(frozenset, C1))
 
 
 '''
@@ -93,7 +93,7 @@ def scanD(D, Ck, minSupport=0.5):
     for subset in D:
         for c in Ck:
             if c.issubset(subset):
-                if frequency.has_key(c):
+                if c in frequency:
                     frequency[c] += 1
                 else:
                     frequency[c] = 1
@@ -154,16 +154,16 @@ so we can cut the branch and increase the speed.
 
 def apriori(dataset, minSupport=0.5):
     C1 = createC1(dataset)
-    print "C%d:" % (1), C1
+    print("C%d:" % (1), C1)
     L1, support = scanD(dataset, C1, 0.5)
-    print L1
-    print support
+    print(L1)
+    print(support)
 
     L = [L1]
     k = 2  # we will generate from C2
     while len(L[k - 2]) > 0:
         Ck = aprioriGen(L[k - 2], k)
-        print "C%d:" % (k), Ck
+        print("C%d:" % (k), Ck)
         Lk, supK = scanD(dataset, Ck, minSupport)
 
         support.update(supK)
@@ -177,7 +177,7 @@ def calcConf(conseqGroup, freqSet, support, rules, minConf=0.5):
     for conseq in conseqGroup:
         conf = support[freqSet] / support[freqSet - conseq]
         if(conf > minConf):
-            print freqSet - conseq, "-->", conseq, "confidence:", conf
+            print(freqSet - conseq, "-->", conseq, "confidence:", conf)
             rules.append((freqSet - conseq, conseq, conf))
             # only the confident node can be used later, aka pruned of the tree
             prunedGroup.append(conseq)
@@ -237,18 +237,18 @@ def createRules(L, support, minConf):
 if __name__ == "__main__":
     filename = "Apriori-input.txt"
     dataset = loadData(filename)
-    print dataset
+    print(dataset)
 
     minSupport = 0.4
     minConf = 0.7
 
     L, support = apriori(dataset, minSupport)
-    print "complete apriori preparation"
+    print("complete apriori preparation")
     for Lk in L:
-        print Lk
+        print(Lk)
 
     for s in support:
-        print s, support[s]
+        print(s, support[s])
 
     rules = createRules(L, support, minConf)
     # print rules

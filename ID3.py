@@ -81,7 +81,7 @@ def chooseBestSplit(dataset):
     for i in range(featureNum):
         featureList = [data[i] for data in dataset]
         uniFeature = set(featureList)
-        print uniFeature
+        print(uniFeature)
 
         newEntropy = 0.0
         for val in uniFeature:
@@ -99,11 +99,11 @@ def chooseBestSplit(dataset):
 
 if __name__ == "__main__":
     sample, classvec = loadData("ID3-input.txt")
-    print "sample", sample
-    print "classification", classvec
+    print("sample", sample)
+    print("classification", classvec)
     # preview(matrix)
     #classify0(sample[-1], sample, classvec)
     # print sample**2
-    print calcShannonEnt(sample)
+    print(calcShannonEnt(sample))
     fid = chooseBestSplit(sample)
-    print fid
+    print(fid)

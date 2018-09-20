@@ -31,8 +31,8 @@ def get_bound(sample):
     # arg = 0 means get min or max in collumn
     minvals = sample.min(0)
     maxvals = sample.max(0)
-    print minvals
-    print maxvals
+    print(minvals)
+    print(maxvals)
     return maxvals, minvals
 
 
@@ -56,12 +56,12 @@ def normalize(sample):
 def get_distance(unknown, known):
     dataSetSize = known.shape[0]
     diffMat = tile(unknown, (dataSetSize, 1)) - known
-    print diffMat
+    print(diffMat)
     sqDiffMat = diffMat**2
     sqDistance = sqDiffMat.sum(axis=1)
-    print sqDistance
+    print(sqDistance)
     distanceM = sqDistance**0.5
-    print distanceM
+    print(distanceM)
 
     return distanceM
 
@@ -74,10 +74,10 @@ def classify0(unknown, known, label, k=3):
 
     # internal sort
     # distanceM.sort()
-    print distanceM
+    print(distanceM)
     # return the index of the result of sort
     sortDisIndex = distanceM.argsort()
-    print sortDisIndex
+    print(sortDisIndex)
 
     classcount = {}
     for i in range(k):
@@ -87,7 +87,7 @@ def classify0(unknown, known, label, k=3):
         classcount[unlabel] = classcount.get(unlabel, 0) + 1
 
     # choose the best
-    print classcount
+    print(classcount)
 
 
 def classify1(input, sample, label, k=3):
@@ -121,8 +121,8 @@ def preview(sample, label=None):
 
 if __name__ == "__main__":
     matrix, classvec = loadData("KNN-input.txt")
-    print matrix
-    print classvec
+    print(matrix)
+    print(classvec)
 
     '''
     We need to do normalization, 
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     Of course, all data including unknown should concluded!
     '''
     matrix, deltas, minvals = normalize(matrix)
-    print matrix
+    print(matrix)
     preview(matrix, classvec)
 
     classify0(matrix[-1], matrix[0:-1], classvec)

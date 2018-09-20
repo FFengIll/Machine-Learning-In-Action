@@ -57,7 +57,7 @@ def standRegress(xArr, yArr):
     xTx = X.T * X
     # be careful to use 0, 0.0 may be better
     if linalg.det(xTx) == 0.0:
-        print "Det = 0, matrix can not do inverse"
+        print("Det = 0, matrix can not do inverse")
         return
     ws = xTx.I * X.T * Y
     return ws
@@ -99,7 +99,7 @@ def lwlr(target, xArr, yArr, k=1.0):
 
     xTx = xM.T * (weights * xM)
     if(linalg.det(xTx) == 0.0):
-        print "cannot do inverse"
+        print("cannot do inverse")
         return None
 
     xTxI = xTx.I
@@ -139,7 +139,7 @@ def ridgeRegress(xM, yM, lam=0.2):
     xTx = xM.T * xM
     denom = xTx + eye(shape(xM)[1]) * lam
     if(linalg.det(denom) == 0.0):
-        print "can not do inverse"
+        print("can not do inverse")
         return
     ws = denom.I * (xM.T * yM)
     return ws
@@ -171,7 +171,7 @@ def ridgeRegressWMat(xArr, yArr):
 
     numTestLam = 30
     wMat = zeros((numTestLam, shape(xM)[1]))
-    lamMat = matrix(range(-10, numTestLam - 10)).T
+    lamMat = matrix(list(range(-10, numTestLam - 10))).T
     for i in range(numTestLam):
         # PS: the lambda is number of exp()
         ws = ridgeRegress(xM, yM, exp(i - 10))
@@ -204,7 +204,7 @@ def stageWiseRegress(xArr, yArr, eps=0.01, numIt=100):
 
     # loop times
     for i in range(numIt):
-        print ws.T
+        print(ws.T)
         lowestErr = inf
 
         # for each feature, we need to test
@@ -249,14 +249,14 @@ def getMatch(y, yHat):
 if __name__ == "__main__":
     # load data set
     xArr, yArr = file2set("VR-input.txt")
-    print xArr
-    print yArr
+    print(xArr)
+    print(yArr)
 
     # prepare x data (just store)
     xTarget = []
     for i in xArr:
         xTarget.append(i[1])
-    print xTarget
+    print(xTarget)
 
     # OLS
     if(0):
@@ -264,8 +264,8 @@ if __name__ == "__main__":
         ws = [float(v) for v in ws]
         yHat = [ws[0] + ws[1] * v for v in xTarget]
 
-        print "OLS weight:", ws
-        print "OLS Regress Value:", yHat
+        print("OLS weight:", ws)
+        print("OLS Regress Value:", yHat)
         # exit(0)
 
     # built-in OLS in NumPy
@@ -276,9 +276,9 @@ if __name__ == "__main__":
         yHat = OLSValue(w, xTarget)
         match = getMatch(yArr, yHat)
 
-        print "built-in OLS Regress Value:", yHat
-        print "built-in OLS Weight:", w
-        print "built-in OLS Match:", match
+        print("built-in OLS Regress Value:", yHat)
+        print("built-in OLS Weight:", w)
+        print("built-in OLS Match:", match)
 
         fig2 = plot.plot(xTarget, yHat, 'b-')
         plot.show()
@@ -287,7 +287,7 @@ if __name__ == "__main__":
     # LWLR
     if(0):
         origin = plot.plot(xTarget, yArr, 'b*')
-        print "LWLR origin value:", yArr
+        print("LWLR origin value:", yArr)
 
         # now we do the LWLR test with different parameters
         paraList = [1.0, 0.5, 0.03]
@@ -297,7 +297,7 @@ if __name__ == "__main__":
             yHat = lwlrHat(xArr, xArr, yArr, paraList[i])
             if(yHat == None):
                 continue
-            print "LWLR regress value", yHat
+            print("LWLR regress value", yHat)
             fig3 = plot.plot(xTarget, yHat, markType[i])
 
         plot.show()
@@ -310,8 +310,8 @@ if __name__ == "__main__":
         The plot will show the weight changing with log(lambda).
         '''
         lamMat, wMat = ridgeRegressWMat(xArr[:, 1], yArr)
-        print "Ridge Lambda:", lamMat
-        print "Ridge W:", wMat
+        print("Ridge Lambda:", lamMat)
+        print("Ridge W:", wMat)
         plot.plot(lamMat, wMat, 'yo', 0.03)
 
         '''
