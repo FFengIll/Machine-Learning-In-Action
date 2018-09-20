@@ -57,17 +57,17 @@ def get_distance(unknown, known):
     dataSetSize = known.shape[0]
     diffMat = tile(unknown, (dataSetSize, 1)) - known
     print(diffMat)
-    sqDiffMat = diffMat**2
+    sqDiffMat = diffMat ** 2
     sqDistance = sqDiffMat.sum(axis=1)
     print(sqDistance)
-    distanceM = sqDistance**0.5
+    distanceM = sqDistance ** 0.5
     print(distanceM)
 
     return distanceM
 
 
 def classify0(unknown, known, label, k=3):
-    #getDistance(sample[0], sample[1])
+    # getDistance(sample[0], sample[1])
 
     # shape means it is a N * M matrix
     distanceM = get_distance(unknown, known)

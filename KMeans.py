@@ -73,7 +73,7 @@ def randCent(dataset, k):
     # create the zeros with k node
     centroids = mat(zeros((k, n)))
 
-    #range in min and max
+    # range in min and max
     for i in range(n):
         minV = min(dataset[:, i])
         maxV = max(dataset[:, i])
@@ -180,16 +180,16 @@ def KMeans(dataset, k):
             for cid in range(k):
                 c = centroids[cid]
                 dis = distEuclid(d, c)
-                if(dis < minus):
+                if dis < minus:
                     minus = dis
                     nearid = cid
 
             # check if changed
-            if(assment[did, 0] != nearid):
+            if assment[did, 0] != nearid:
                 changed = True  # go on if changed
 
             # we store the assment for later work, and distance too
-            assment[did] = nearid, minus**2
+            assment[did] = nearid, minus ** 2
 
         # adjust all centroids, because the clusters details changed and so do centroids
         for cid in range(k):
@@ -231,7 +231,6 @@ we centroids have least increasing on SSE.
 so maybe we can use these ways just in the processing
 '''
 
-
 '''
 bisecting K means: a algorithm make all nodes as one cluster and do bisecting with the one cluster.
 we can continue to do bisecting with one cluster to decrease the SSE until we meet k.
@@ -268,9 +267,9 @@ def biKMeans(dataset, k, distMeas=distEuclid):
             # compute others' sse
             sse_old = 0.0
             for j in range(time):
-                if(i == j):
+                if i == j:
                     continue
-                #sse_old += SSE(clusters[j],allassment[j],allcentroids[j])
+                # sse_old += SSE(clusters[j],allassment[j],allcentroids[j])
                 sse_old += allsse[j]
 
             sse_sum = sse_new + sse_old
@@ -340,9 +339,9 @@ def biKMeansAuto(dataset, k=100, distMeas=distEuclid):
             # compute others' sse
             sse_old = 0.0
             for j in range(time):
-                if(i == j):
+                if i == j:
                     continue
-                #sse_old += SSE(clusters[j],allassment[j],allcentroids[j])
+                # sse_old += SSE(clusters[j],allassment[j],allcentroids[j])
                 sse_old += allsse[j]
 
             sse_sum = sse_new + sse_old

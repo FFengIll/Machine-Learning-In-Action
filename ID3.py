@@ -55,7 +55,7 @@ def splitDataSet(dataset, axis, value):
         if data[axis] == value:
             # split the axis data
             newdata = data[:axis] + data[axis + 1:]
-            #newdata.extend(  )
+            # newdata.extend(  )
             retSet.append(newdata)
     return retSet
 
@@ -90,7 +90,7 @@ def chooseBestSplit(dataset):
             newEntropy += prob * calcShannonEnt(subDataset)
 
         tmpGain = baseEnt - newEntropy
-        if(tmpGain > bestGain):
+        if tmpGain > bestGain:
             bestGain = tmpGain
             bestFeature = i
 
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     print("sample", sample)
     print("classification", classvec)
     # preview(matrix)
-    #classify0(sample[-1], sample, classvec)
+    # classify0(sample[-1], sample, classvec)
     # print sample**2
     print(calcShannonEnt(sample))
     fid = chooseBestSplit(sample)

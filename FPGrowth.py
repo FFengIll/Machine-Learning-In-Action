@@ -11,13 +11,13 @@ def loadData(filename):
     line = None
     line = fp.readline()
     dataset = []
-    while(line):
+    while (line):
         # print line
         line = line.strip()
 
         # translate the data to number
         subset = line
-        #subset= [v for v in line]
+        # subset= [v for v in line]
         # print subset
 
         dataset.append(subset)
@@ -49,7 +49,7 @@ class Node():
 
 def updateHeader(item, header, node):
     # if no such node, add to header, else add to link list at the last
-    if(item in header):
+    if item in header:
         tmpnode = header[item]
         # find the last one
         while (tmpnode.link != None):
@@ -94,13 +94,13 @@ def buildTree(dataset, minSup=1):
     hashtable = {}
     for record in dataset:
         for item in record:
-            #hashtable[item] = hashtable.get(item,0) + 1
+            # hashtable[item] = hashtable.get(item,0) + 1
             hashtable[item] = hashtable.get(item, 0) + dataset[record]
 
     # if the key not meet min support (aka occurrence or frequency), delete it
     for k in list(hashtable.keys()):
-        if (hashtable[k] < minSup):
-            del(hashtable[k])
+        if hashtable[k] < minSup:
+            del hashtable[k]
 
     # print hashtable;
 
@@ -123,7 +123,7 @@ def buildTree(dataset, minSup=1):
             localD[item] = hashtable.get(item, 0)
 
         # sort item and delete not support (or keep 0)
-        orderRec = [v[0] for v in sorted(list(localD.items()), key=lambda p:p[1])]
+        orderRec = [v[0] for v in sorted(list(localD.items()), key=lambda p: p[1])]
         orderRec.reverse()
         print(orderRec)
         # print localD;
@@ -161,7 +161,7 @@ def findPrefix(basePat, tree):
     node = tree
     while (node != None):
         prefix = ancestorNode(node)
-        if(len(prefix) > 0):
+        if len(prefix) > 0:
             condPats[frozenset(prefix)] = node.freq
         node = node.link
 
@@ -171,7 +171,9 @@ def findPrefix(basePat, tree):
 
 def mineTree(tree, header, minSup, prefix, freqItemList):
     # sort form small to large - we wanna scan from the leaf node (low frequency)
-    items = [v[0] for v in sorted(list(header.items()), key=lambda p:p[1])]
+    items = list(header.items())
+    items.sort(key=lambda p: p[1].freq)
+    items = [v[0] for v in items]
 
     for basePat in items:
         # generate the new freqSet, aka the new prefix (will use later)
@@ -250,4 +252,4 @@ if __name__ == "__main__":
     print(newdata)
 
     freqSet = FPGrowth(newdata, 3)
-    print(freqItemList)
+    print("relationship:", freqSet)

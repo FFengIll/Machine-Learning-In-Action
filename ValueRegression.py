@@ -35,7 +35,7 @@ check the rss error
 
 
 def rssError(yArr, yHatArr):
-    return ((yArr - yHatArr)**2).sum()
+    return ((yArr - yHatArr) ** 2).sum()
 
 
 '''
@@ -95,10 +95,10 @@ def lwlr(target, xArr, yArr, k=1.0):
     for i in range(m):
         # get all distance
         diffM = target - xM[i, :]
-        weights[i, i] = exp(diffM * diffM.T / (-2 * k**2))
+        weights[i, i] = exp(diffM * diffM.T / (-2 * k ** 2))
 
     xTx = xM.T * (weights * xM)
-    if(linalg.det(xTx) == 0.0):
+    if linalg.det(xTx) == 0.0:
         print("cannot do inverse")
         return None
 
@@ -117,7 +117,7 @@ def lwlrHat(targetArr, xArr, yArr, k=1.0):
     yHat = zeros(m)
     for i in range(m):
         ret = lwlr(targetArr[i], xArr, yArr, k)
-        if(ret == None):
+        if ret is None:
             return None
         yHat[i] = ret
     return yHat
@@ -138,7 +138,7 @@ so we need to min(lambda) - data 1 for test, data 2 for w
 def ridgeRegress(xM, yM, lam=0.2):
     xTx = xM.T * xM
     denom = xTx + eye(shape(xM)[1]) * lam
-    if(linalg.det(denom) == 0.0):
+    if linalg.det(denom) == 0.0:
         print("can not do inverse")
         return
     ws = denom.I * (xM.T * yM)
@@ -192,8 +192,8 @@ def stageWiseRegress(xArr, yArr, eps=0.01, numIt=100):
     yMat = mat(yArr).T
     yMean = mean(yMat, 0)
 
-    #yMat = yMat - yMean
-    #xMat = regular(xMat)
+    # yMat = yMat - yMean
+    # xMat = regular(xMat)
 
     m, n = shape(xMat)
 
@@ -259,7 +259,7 @@ if __name__ == "__main__":
     print(xTarget)
 
     # OLS
-    if(0):
+    if 0:
         ws = standRegress(xArr, yArr)
         ws = [float(v) for v in ws]
         yHat = [ws[0] + ws[1] * v for v in xTarget]
@@ -269,7 +269,7 @@ if __name__ == "__main__":
         # exit(0)
 
     # built-in OLS in NumPy
-    if(0):
+    if 0:
         origin = plot.plot(xTarget, yArr, 'b*')
 
         w = OLS(xTarget, yArr)
@@ -285,7 +285,7 @@ if __name__ == "__main__":
         # exit(0)
 
     # LWLR
-    if(0):
+    if 0:
         origin = plot.plot(xTarget, yArr, 'b*')
         print("LWLR origin value:", yArr)
 
@@ -295,7 +295,7 @@ if __name__ == "__main__":
 
         for i in range(len(paraList)):
             yHat = lwlrHat(xArr, xArr, yArr, paraList[i])
-            if(yHat == None):
+            if yHat is None:
                 continue
             print("LWLR regress value", yHat)
             fig3 = plot.plot(xTarget, yHat, markType[i])
@@ -303,7 +303,7 @@ if __name__ == "__main__":
         plot.show()
 
     # Ridge Regress
-    if(0):
+    if 0:
         '''
         We need to regress all features and get the weights to do next analysis.
         Here we only use one as demo.
@@ -330,7 +330,7 @@ if __name__ == "__main__":
         plot.show()
 
     # Stage Wise Regress
-    if(0):
+    if 0:
         xArr, yArr = file2set("VR-input2.txt")
         eps = 0.01
         numIt = 500

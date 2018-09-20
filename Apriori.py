@@ -42,7 +42,7 @@ def loadData(filename):
     line = None
     line = fp.readline()
     dataset = []
-    while(line):
+    while (line):
         # print line
         line = line.strip()
 
@@ -176,7 +176,7 @@ def calcConf(conseqGroup, freqSet, support, rules, minConf=0.5):
     prunedGroup = []
     for conseq in conseqGroup:
         conf = support[freqSet] / support[freqSet - conseq]
-        if(conf > minConf):
+        if conf > minConf:
             print(freqSet - conseq, "-->", conseq, "confidence:", conf)
             rules.append((freqSet - conseq, conseq, conf))
             # only the confident node can be used later, aka pruned of the tree
@@ -185,7 +185,6 @@ def calcConf(conseqGroup, freqSet, support, rules, minConf=0.5):
 
 
 def getRulesFromSet(conseqGroup, freqSet, support, rules, minConf=0.5):
-
     n = len(freqSet)
     m = len(conseqGroup[0])
 
@@ -194,9 +193,9 @@ def getRulesFromSet(conseqGroup, freqSet, support, rules, minConf=0.5):
     '''
     tmpGroup = calcConf(conseqGroup, freqSet, support, rules, minConf)
     # m is the consequence, and we must have at least 1 as prefix, then we need more than (m+1)
-    if(n > m + 1):
+    if n > m + 1:
         tmpGroup = aprioriGen(tmpGroup, m + 1)
-        if(len(tmpGroup) > 1):
+        if len(tmpGroup) > 1:
             getRulesFromSet(tmpGroup, freqSet, support, rules, minConf)
     return
 
@@ -206,10 +205,10 @@ def getRulesFromSet(conseqGroup, freqSet, support, rules, minConf=0.5):
     If a rule X -> Y-X does not meet confidence, then  X' -> Y-X' can not meet either, where X' is a subset of X.
     So we can use the theorem to do prune.
     '''
-    if(n > (m + 1)):
+    if n > m + 1:
         tmpGroup = aprioriGen(conseqGroup, m + 1)
         tmpGroup = calcConf(tmpGroup, freqSet, support, rules, minConf)
-        if(len(tmpGroup) > 1):
+        if len(tmpGroup) > 1:
             getRulesFromSet(tmpGroup, freqSet, support, rules, minConf)
 
 
@@ -224,7 +223,7 @@ def createRules(L, support, minConf):
     for i in range(1, len(L)):
         for freqSet in L[i]:
             conseqGroup = [frozenset([item]) for item in freqSet]
-            if(i > 1):
+            if i > 1:
                 # for more than 2, we have to prune and combine
                 tempRules = getRulesFromSet(
                     conseqGroup, freqSet, support, rules, minConf)

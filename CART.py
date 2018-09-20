@@ -94,13 +94,13 @@ def chooseBestSplit(dataset, leafMethod=regLeaf, errMethod=regError, ops=(1, 4))
         for splitVal in splitSet:
             s1, s2 = binSplit(dataset, featId, splitVal)
             # Optimization: if not feat the min sample number, aka tolerate N, drop it
-            if(shape(s1)[0] < tolN or shape(s2)[0] < tolN):
+            if shape(s1)[0] < tolN or shape(s2)[0] < tolN:
                 continue
             # update best
             err1 = errMethod(s1)
             err2 = errMethod(s2)
             err = err1 + err2
-            if (err < bestS):
+            if err < bestS:
                 bestS = err
                 bestIndex = featId
                 bestVal = splitVal
@@ -112,7 +112,7 @@ def chooseBestSplit(dataset, leafMethod=regLeaf, errMethod=regError, ops=(1, 4))
         return None, leafMethod(dataset)
 
     # may no better split (or split is too small, see the Optimization)
-    if (bestLeft == None or bestRight == None):
+    if bestLeft is None or bestRight is None:
         return None, leafMethod(dataset)
 
     return bestIndex, bestVal
@@ -123,7 +123,7 @@ def CART(dataset, leafMethod=regLeaf, errMethod=regError, ops=(1, 4)):
     feat, val = chooseBestSplit(dataset, leafMethod, errMethod, ops)
 
     # if no more feasible feature, just stop (in recursion)
-    if feat == None:
+    if feat is None:
         return val
 
     # update info, we use dict to store but define a class
@@ -171,7 +171,6 @@ def preview(dataset, cartTree):
 
 
 if __name__ == "__main__":
-
     '''
     #unit test input
     dataset = [[1,1,1] ,[1,0,1] ,[1,0,1]]
