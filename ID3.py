@@ -60,13 +60,14 @@ def splitDataSet(dataset, axis, value):
     return retSet
 
 
-'''
-choose the best feature to split the dataset.
-this feature will give the best entropy gain which means data classification is clear 
-'''
-
-
 def chooseBestSplit(dataset):
+    """
+    choose the best feature to split the dataset.
+    this feature will give the best entropy gain which means data classification is clear
+    :param dataset:
+    :return:
+    """
+
     # feature number except the result one
     featureNum = len(dataset[0])
     featureNum -= 1
@@ -97,6 +98,10 @@ def chooseBestSplit(dataset):
     return bestFeature
 
 
+def preview_tree(index, label):
+    pass
+
+
 if __name__ == "__main__":
     sample, classvec = loadData("ID3-input.txt")
     print("sample", sample)
@@ -104,6 +109,8 @@ if __name__ == "__main__":
     # preview(matrix)
     # classify0(sample[-1], sample, classvec)
     # print sample**2
-    print(calcShannonEnt(sample))
-    fid = chooseBestSplit(sample)
-    print(fid)
+    shannon_ent = calcShannonEnt(sample)
+    print(shannon_ent)
+    feature_index = chooseBestSplit(sample)
+    print('the best feature index:', feature_index)
+    preview_tree()

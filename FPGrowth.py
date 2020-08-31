@@ -7,23 +7,15 @@ import matplotlib.pyplot as plot
 
 
 def loadData(filename):
-    fp = open(filename)
-    line = None
-    line = fp.readline()
     dataset = []
-    while (line):
-        # print line
-        line = line.strip()
 
-        # translate the data to number
-        subset = line
-        # subset= [v for v in line]
-        # print subset
+    with open(filename) as fp:
+        for line in fp:
+            # print line
+            line = line.strip()
 
-        dataset.append(subset)
-
-        # next line
-        line = fp.readline()
+            subset = line
+            dataset.append(subset)
 
     return dataset
 
@@ -52,7 +44,7 @@ def updateHeader(item, header, node):
     if item in header:
         tmpnode = header[item]
         # find the last one
-        while (tmpnode.link != None):
+        while tmpnode.link is not None:
             tmpnode = tmpnode.link
         tmpnode.link = node
     else:
@@ -102,11 +94,10 @@ def buildTree(dataset, minSup=1):
         if hashtable[k] < minSup:
             del hashtable[k]
 
-    # print hashtable;
+    # print(hashtable)
 
     # get freqSet including items, #if no item meet, over the flow
     freqset = set(hashtable.keys())
-    # print freqset;
     if len(freqset) <= 0:
         return None, None
 
@@ -126,7 +117,7 @@ def buildTree(dataset, minSup=1):
         orderRec = [v[0] for v in sorted(list(localD.items()), key=lambda p: p[1])]
         orderRec.reverse()
         print(orderRec)
-        # print localD;
+        # print(localD)
 
         '''
         Update the tree: find item node and update, or create new item first.
@@ -145,27 +136,27 @@ def ancestorNode(node, minSup=1):
     curNode = node.parent
 
     # visit ancestor node until root
-    while curNode != None:
+    while curNode is not None:
         if curNode.freq >= minSup:
             name = curNode.name
             res.append(name)
 
         curNode = curNode.parent
 
-    # print "prefix of %s:%s" %(node.name, res);
+    # print("prefix of {}:{}".format(node.name, res))
     return res
 
 
 def findPrefix(basePat, tree):
     condPats = {}
     node = tree
-    while (node != None):
+    while node is not None:
         prefix = ancestorNode(node)
         if len(prefix) > 0:
             condPats[frozenset(prefix)] = node.freq
         node = node.link
 
-    # print "condition pattern of %s:%s" %(tree.name,condPats);
+    # print("condition pattern of {}:{}".format(tree.name,condPats))
     return condPats
 
 
@@ -194,31 +185,30 @@ def mineTree(tree, header, minSup, prefix, freqItemList):
         condPats = findPrefix(basePat, header[basePat])
         subtree, subheader = buildTree(condPats, minSup)
 
-        if subheader != None:
-            print("conditional tree for %s" % (newPrefix))
+        if subheader is not None:
+            print("conditional tree for {}".format(newPrefix))
             subtree.disp()
             mineTree(subtree, subheader, minSup, newPrefix, freqItemList)
 
 
-'''
-FP-Growth is a quick algorithm to find frequent set.
-The efficiency of the algorithm comes from ONLY 2 times data scan:
-first for global item frequency;
-second for tree building;
-then all analysis can only base on the FP tree.
-Though we need to sort for each record, it is cheap in global.
-So building the FP tree is the most hard work in the algorithm - that is a complex structure.
-
-P.S. the Growth comes from the tree building (tree nodes will be created just like tree is growing).
-Once the tree built, we could get the frequency set soon.
-'''
-
-
 def FPGrowth(dataset, minSup=1):
-    '''
-    We will  build a tree and a header table.
-    Be careful!
-    '''
+    """
+    FP-Growth is a quick algorithm to find frequent set.
+    The efficiency of the algorithm comes from ONLY 2 times data scan:
+    first for global item frequency;
+    second for tree building;
+    then all analysis can only base on the FP tree.
+    Though we need to sort for each record, it is cheap in global.
+    So building the FP tree is the most hard work in the algorithm - that is a complex structure.
+
+    P.S. the Growth comes from the tree building (tree nodes will be created just like tree is growing).
+    Once the tree built, we could get the frequency set soon.
+    :param dataset:
+    :param minSup:
+    :return:
+    """
+
+    # Be careful! We will  build a tree and a header table.
     tree, header = buildTree(dataset, minSup)
     tree.disp()
 
@@ -233,7 +223,7 @@ def FPGrowth(dataset, minSup=1):
 
     # a test flow of the method to find prefix
     for k in list(header.keys()):
-        print("prefix of %s: %s" % (k, findPrefix(k, header[k])))
+        print("prefix of {}:{}".format(k, findPrefix(k, header[k])))
 
     # recursively mine the FP tree to find frequency set
     mineTree(tree, header, minSup, set([]), freqItemList)

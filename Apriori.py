@@ -1,76 +1,70 @@
 import sys
 import os
+import pprint
 from numpy import *
 from operator import *
 import matplotlib
 import matplotlib.pyplot as plot
 
-mapping = dict()
-mappingid = 0
+name_map = {}
+id_map = {}
+map_id = 0
 
 
 def translate(src):
-    global mapping, mappingid
+    global name_map, map_id, id_map
 
     dest = []
     for i in src:
-        if i not in mapping:
-            mapping[i] = mappingid
-            mappingid += 1
+        if i not in name_map:
+            name_map[i] = map_id
+            id_map[map_id] = i
+            map_id += 1
 
-        dest.append(mapping[i])
+        dest.append(name_map[i])
 
     return dest
 
 
 def re_translate(src):
-    global mapping, mappingid
+    global name_map, map_id
 
     dest = []
     for i in src:
-        if i not in mapping:
-            mapping[i] = mappingid
-            mappingid += 1
+        if i not in name_map:
+            name_map[i] = map_id
+            map_id += 1
 
-        dest.append(mapping[i])
+        dest.append(name_map[i])
 
     return dest
 
 
 def loadData(filename):
-    fp = open(filename)
-    line = None
-    line = fp.readline()
     dataset = []
-    while (line):
-        # print line
-        line = line.strip()
 
-        subset = line.split("\t")
-        # print subset
+    with open(filename) as fp:
+        for line in fp:
+            line = line.strip()
 
-        # drop the first data
-        subset = subset[1:]
+            # drop the first data
+            subset = line.split("\t")[1:]
 
-        # translate the data to number
-        subset = translate(subset)
-        # print subset
-
-        dataset.append(subset)
-
-        # next line
-        line = fp.readline()
+            # translate the data to number
+            subset = translate(subset)
+            dataset.append(subset)
 
     return dataset
 
 
-'''
-will create the candidates with only 1 element, aka C1, conbination 1.
-this will become the basic of our later work.
-'''
-
-
 def createC1(dataset):
+    """
+    will create the candidates with only 1 element, aka C1, conbination 1.
+    this will become the basic of our later work.
+    :param dataset:
+    :return:
+    """
+
     C1 = []
     for subset in dataset:
         for item in subset:
@@ -81,13 +75,16 @@ def createC1(dataset):
     return list(map(frozenset, C1))
 
 
-'''
-will scan the dataset, and analysis the frequency of Ck.
-of course we will drop the set under the min support, which will help to cut branch.
-'''
-
-
 def scanD(D, Ck, minSupport=0.5):
+    """
+    will scan the dataset, and analysis the frequency of Ck.
+    of course we will drop the set under the min support, which will help to cut branch.
+    :param D:
+    :param Ck:
+    :param minSupport:
+    :return:
+    """
+
     frequency = dict()
     # scan dataset and get the frequency of each c in Ck
     for subset in D:
@@ -114,15 +111,17 @@ def scanD(D, Ck, minSupport=0.5):
     return res, supportDeg
 
 
-'''
-Be careful, during apriori, we will use the Layer to generate another Layer, aka Layer K.
-we only use the layer to generate k! We should confirm the network structure.
-e.g. 01, 02, 03, 12, 13, 23 will generate only 012, 023, 013, 123 but no 1234 (why? see the next)
-so we are using Ck, aka the combination k - in code, we use the prefix to confirm.
-'''
-
-
 def aprioriGen(Lk, k):
+    """
+    Be careful, during apriori, we will use the Layer to generate another Layer, aka Layer K.
+    we only use the layer to generate k! We should confirm the network structure.
+    e.g. 01, 02, 03, 12, 13, 23 will generate only 012, 023, 013, 123 but no 1234 (why? see the next)
+    so we are using Ck, aka the combination k - in code, we use the prefix to confirm.
+    :param Lk:
+    :param k:
+    :return:
+    """
+
     res = []
     lenlk = len(Lk)
     for i in range(lenlk):
@@ -143,29 +142,32 @@ def aprioriGen(Lk, k):
     return res
 
 
-'''
-Apriori: is a algorithm to analysis the frequency of each conbination meet the support degree;
-and then extract the rules from the combination according to the confidence degree.
-PS1: the low support degree means the conbination of supreset won't meet either.
-PS2: the low confidence degree means the rule of subset won't meet either.
-so we can cut the branch and increase the speed.
-'''
-
-
 def apriori(dataset, minSupport=0.5):
+    """
+    Apriori: is a algorithm to analysis the frequency of each conbination meet the support degree;
+    and then extract the rules from the combination according to the confidence degree.
+    PS1: the low support degree means the conbination of supreset won't meet either.
+    PS2: the low confidence degree means the rule of subset won't meet either.
+    so we can cut the branch and increase the speed.
+    :param dataset:
+    :param minSupport:
+    :return:
+    """
     C1 = createC1(dataset)
-    print("C%d:" % (1), C1)
+    print("C1: {}".format(C1))
     L1, support = scanD(dataset, C1, 0.5)
     print(L1)
     print(support)
 
     L = [L1]
     k = 2  # we will generate from C2
-    while len(L[k - 2]) > 0:
-        Ck = aprioriGen(L[k - 2], k)
-        print("C%d:" % (k), Ck)
-        Lk, supK = scanD(dataset, Ck, minSupport)
 
+    # use the newest L
+    while len(L[-1]) > 0:
+        Ck = aprioriGen(L[-1], k)
+        print("C{}: {}".format(k, Ck))
+
+        Lk, supK = scanD(dataset, Ck, minSupport)
         support.update(supK)
         L.append(Lk)
         k += 1
@@ -212,12 +214,14 @@ def getRulesFromSet(conseqGroup, freqSet, support, rules, minConf=0.5):
             getRulesFromSet(tmpGroup, freqSet, support, rules, minConf)
 
 
-'''
-an entry to create rules from support and frequency set
-'''
-
-
 def createRules(L, support, minConf):
+    """
+    an entry to create rules from support and frequency set
+    :param L:
+    :param support:
+    :param minConf:
+    :return:
+    """
     rules = []
     # of course we need more than 1 element
     for i in range(1, len(L)):
@@ -225,12 +229,21 @@ def createRules(L, support, minConf):
             conseqGroup = [frozenset([item]) for item in freqSet]
             if i > 1:
                 # for more than 2, we have to prune and combine
-                tempRules = getRulesFromSet(
-                    conseqGroup, freqSet, support, rules, minConf)
+                getRulesFromSet(conseqGroup, freqSet, support, rules, minConf)
             else:
                 # for 2 elements, we can directly calculate
                 calcConf(conseqGroup, freqSet, support, rules, minConf)
     return rules
+
+
+def index2name(rules):
+    res = []
+    for left, right, conf in rules:
+        left = [id_map[i] for i in left]
+        right = [id_map[i] for i in right]
+        res.append((left, right, conf))
+    res.sort(key=lambda x: x[2])
+    return res
 
 
 if __name__ == "__main__":
@@ -250,4 +263,5 @@ if __name__ == "__main__":
         print(s, support[s])
 
     rules = createRules(L, support, minConf)
-    # print rules
+    rules = index2name(rules)
+    pprint.pprint(rules, indent=4)

@@ -9,9 +9,13 @@ Context may not follow the list, and English go ahead Chinese.
 
 正文可能并未按照目录书写。全文各段落英文在前，中文在后。
 
+# Tips
+机器学习的功用：预测与分类。
+
 # List
 - [Machine Learning in Action](#machine-learning-in-action)
 - [Abstract](#abstract)
+- [Tips](#tips)
 - [List](#list)
 - [Classification](#classification)
 	- [KNN (K Nearest Neighbor)](#knn-k-nearest-neighbor)
@@ -77,8 +81,12 @@ PS：香农熵越大，意味着信息越丰富；
 弱分类器是指分类效果相对单一，使用部分测试集的分类模型，一般通过（加权）投票表决的方式整合。
 
 # Logistic Regressive
+主要用于分类
+
+> https://www.cnblogs.com/weiququ/p/8085964.html
 
 # Linear Regression
+主要用于预测
 
 ## Brief
 I will not do too much explanation on linear regression algorithm,

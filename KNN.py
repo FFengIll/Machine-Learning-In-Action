@@ -5,6 +5,7 @@ from operator import *
 import matplotlib
 import matplotlib.pyplot as plot
 from matplotlib import colors
+from collections import defaultdict
 
 
 def loadData(filename):
@@ -46,9 +47,9 @@ def normalize(sample):
     n, m = sample.shape
     normSample = zeros((n, m))
 
+    # process by element
     normSample = sample - tile(minvals, (n, 1))
     normSample = normSample / tile(deltas, (n, 1))
-    # print normSample
 
     return normSample, deltas, minvals
 
@@ -67,24 +68,30 @@ def get_distance(unknown, known):
 
 
 def classify0(unknown, known, label, k=3):
-    # getDistance(sample[0], sample[1])
+    """
+    get the most possilbe k point by distance
+    then do vote
+    :param unknown:
+    :param known:
+    :param label:
+    :param k:
+    :return:
+    """
 
     # shape means it is a N * M matrix
     distanceM = get_distance(unknown, known)
 
-    # internal sort
-    # distanceM.sort()
     print(distanceM)
     # return the index of the result of sort
     sortDisIndex = distanceM.argsort()
     print(sortDisIndex)
 
-    classcount = {}
+    classcount = defaultdict(lambda: 0)
     for i in range(k):
         # use sort index to get label
         unlabel = label[sortDisIndex[i]]
         # use dict to store the count of label
-        classcount[unlabel] = classcount.get(unlabel, 0) + 1
+        classcount[unlabel] += 1
 
     # choose the best
     print(classcount)
@@ -129,8 +136,9 @@ if __name__ == "__main__":
     The value distribution of each feature will influence the distance seriously.
     Of course, all data including unknown should concluded!
     '''
-    matrix, deltas, minvals = normalize(matrix)
-    print(matrix)
-    preview(matrix, classvec)
+    norm_matrix, deltas, minvals = normalize(matrix)
+    print(norm_matrix)
+    preview(norm_matrix, classvec)
 
-    classify0(matrix[-1], matrix[0:-1], classvec)
+    # split known and unknown by label
+    classify0(norm_matrix[-1], norm_matrix[0:-1], classvec)

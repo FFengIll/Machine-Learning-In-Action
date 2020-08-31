@@ -29,29 +29,28 @@ def file2set(filename):
     return dataset, labelset
 
 
-'''
-check the rss error
-'''
-
-
 def rssError(yArr, yHatArr):
+    """
+    check the rss error
+    """
     return ((yArr - yHatArr) ** 2).sum()
 
 
-'''
-general regression for 2 dimensional data,
-aka, OLS (Ordinary Least Square)
-=>
-sum{ (y-Xw).T (y-Xw) }
-=>
-let f'(w)=0
-then ws = ( X.T X) ^ (-1)  X.T y
-=>
-but we must have inverse of X
-'''
-
-
 def standRegress(xArr, yArr):
+    """
+    general regression for 2 dimensional data,
+    aka, OLS (Ordinary Least Square)
+    =>
+    sum{ (y-Xw).T (y-Xw) }
+    =>
+    let f'(w)=0
+    then ws = ( X.T X) ^ (-1)  X.T y
+    =>
+    but we must have inverse of X
+    :param xArr:
+    :param yArr:
+    :return:
+    """
     X = mat(xArr)
     Y = mat(yArr).T
     xTx = X.T * X
@@ -61,17 +60,6 @@ def standRegress(xArr, yArr):
         return
     ws = xTx.I * X.T * Y
     return ws
-
-
-'''
-here use method of Ordinary Least Square in NumPy only
-'''
-
-
-def OLS(xArr, yArr):
-    w = np.polyfit(xArr, yArr, 1)
-    fitfunction = np.poly1d(w)
-    return w
 
 
 '''
@@ -145,20 +133,21 @@ def ridgeRegress(xM, yM, lam=0.2):
     return ws
 
 
-'''
-ridge regress entry
-we have to find the best lambda by test
-and for computing, we need to do normalization
-=>
-2 normalization method:
-Min-Max normalization: map into [0-1] (new data may influence the min max)
-Z-score normalization: use mean and standard deviation or variance to map Normal Distribution
-=>
-will return the lambda matrix and related ws matrix
-'''
-
-
 def ridgeRegressWMat(xArr, yArr):
+    """
+    ridge regress entry
+    we have to find the best lambda by test
+    and for computing, we need to do normalization
+    =>
+    2 normalization method:
+    Min-Max normalization: map into [0-1] (new data may influence the min max)
+    Z-score normalization: use mean and standard deviation or variance to map Normal Distribution
+    =>
+    will return the lambda matrix and related ws matrix
+    :param xArr:
+    :param yArr:
+    :return:
+    """
     xM = matrix(xArr).T
     yM = matrix(yArr).T
 
@@ -204,7 +193,6 @@ def stageWiseRegress(xArr, yArr, eps=0.01, numIt=100):
 
     # loop times
     for i in range(numIt):
-        print(ws.T)
         lowestErr = inf
 
         # for each feature, we need to test
@@ -246,6 +234,102 @@ def getMatch(y, yHat):
     return res
 
 
+def OLS(xArr, yArr, xTarget):
+    # OLS
+
+    ws = standRegress(xArr, yArr)
+    ws = [float(v) for v in ws]
+    yHat = [ws[0] + ws[1] * v for v in xTarget]
+
+    print("OLS weight:", ws)
+    print("OLS Regress Value:", yHat)
+
+    origin = plot.plot(xTarget, yArr, 'b*')
+    fig2 = plot.plot(xTarget, yHat, 'b-')
+    plot.show()
+
+
+def OLS2(xArr, yArr, xTarget):
+    """
+    method of Ordinary Least Square built in NumPy
+    :param xArr:
+    :param yArr:
+    :return:
+    """
+
+    w = np.polyfit(xTarget, yArr, 1)
+
+    yHat = OLSValue(w, xTarget)
+    match = getMatch(yArr, yHat)
+
+    print("built-in OLS Regress Value:", yHat)
+    print("built-in OLS Weight:", w)
+    print("built-in OLS Match:", match)
+
+    origin = plot.plot(xTarget, yArr, 'b*')
+    fig2 = plot.plot(xTarget, yHat, 'b-')
+    plot.show()
+
+
+def LWLR(xArr, yArr, xTarget):
+    # LWLR
+
+    # now we do the LWLR test with different parameters
+    paraList = [1.0, 0.5, 0.03]
+    markType = ['r-', 'g-', 'y-']
+
+    print("LWLR origin value:", yArr)
+
+    origin = plot.plot(xTarget, yArr, 'b*')
+    for i in range(len(paraList)):
+        yHat = lwlrHat(xArr, xArr, yArr, paraList[i])
+        if yHat is None:
+            continue
+        print("LWLR regress value", yHat)
+        fig3 = plot.plot(xTarget, yHat, markType[i])
+
+    plot.show()
+
+
+def Ridge(xArr, yArr, xTarget):
+    # Ridge Regress
+
+    '''
+    We need to regress all features and get the weights to do next analysis.
+    Here we only use one as demo.
+    The plot will show the weight changing with log(lambda).
+    '''
+    lamMat, wMat = ridgeRegressWMat(xArr[:, 1], yArr)
+    print("Ridge Lambda:", lamMat)
+    print("Ridge W:", wMat)
+    plot.plot(lamMat, wMat, 'yo', 0.03)
+
+    # m, n = shape(xArr)
+    # lamList = []
+    # wList = []
+    # for i in range(n):
+    #     lamMat, wMat = ridgeRegressWMat(xArr[:, i], yArr)
+    #     print("Ridge Lambda:", lamMat)
+    #     print("Ridge W:", wMat)
+    #     lamList.append(lamMat)
+    #     wList.append(wMat)
+    #     plot.plot(lamMat, wMat, 'yo', 0.03)
+
+    plot.show()
+
+
+def StageWiseRegress(xArr, yArr, xTarget):
+    # Stage Wise Regress
+
+    eps = 0.01
+    numIt = 500
+    wMat = stageWiseRegress(xArr, yArr, eps, numIt)
+    print("Stage Wise W:", wMat)
+
+    # plot.plot(lamMat, wMat, 'yo', 0.03)
+    # plot.show()
+
+
 if __name__ == "__main__":
     # load data set
     xArr, yArr = file2set("VR-input.txt")
@@ -258,85 +342,8 @@ if __name__ == "__main__":
         xTarget.append(i[1])
     print(xTarget)
 
-    # OLS
-    if 0:
-        ws = standRegress(xArr, yArr)
-        ws = [float(v) for v in ws]
-        yHat = [ws[0] + ws[1] * v for v in xTarget]
-
-        print("OLS weight:", ws)
-        print("OLS Regress Value:", yHat)
-        # exit(0)
-
-    # built-in OLS in NumPy
-    if 0:
-        origin = plot.plot(xTarget, yArr, 'b*')
-
-        w = OLS(xTarget, yArr)
-        yHat = OLSValue(w, xTarget)
-        match = getMatch(yArr, yHat)
-
-        print("built-in OLS Regress Value:", yHat)
-        print("built-in OLS Weight:", w)
-        print("built-in OLS Match:", match)
-
-        fig2 = plot.plot(xTarget, yHat, 'b-')
-        plot.show()
-        # exit(0)
-
-    # LWLR
-    if 0:
-        origin = plot.plot(xTarget, yArr, 'b*')
-        print("LWLR origin value:", yArr)
-
-        # now we do the LWLR test with different parameters
-        paraList = [1.0, 0.5, 0.03]
-        markType = ['r-', 'g-', 'y-']
-
-        for i in range(len(paraList)):
-            yHat = lwlrHat(xArr, xArr, yArr, paraList[i])
-            if yHat is None:
-                continue
-            print("LWLR regress value", yHat)
-            fig3 = plot.plot(xTarget, yHat, markType[i])
-
-        plot.show()
-
-    # Ridge Regress
-    if 0:
-        '''
-        We need to regress all features and get the weights to do next analysis.
-        Here we only use one as demo.
-        The plot will show the weight changing with log(lambda).
-        '''
-        lamMat, wMat = ridgeRegressWMat(xArr[:, 1], yArr)
-        print("Ridge Lambda:", lamMat)
-        print("Ridge W:", wMat)
-        plot.plot(lamMat, wMat, 'yo', 0.03)
-
-        '''
-        m,n = shape(xArr)
-        lamList = []
-        wList = []
-        for i in range(n):
-            lamMat ,wMat = ridgeRegressWMat(xArr[:,i], yArr)
-            print "Ridge Lambda:",lamMat
-            print "Ridge W:", wMat
-            lamList.append(lamMat)
-            wList.append(wMat)
-            plot.plot(lamMat, wMat,'yo',0.03)   
-        '''
-
-        plot.show()
-
-    # Stage Wise Regress
-    if 0:
-        xArr, yArr = file2set("VR-input2.txt")
-        eps = 0.01
-        numIt = 500
-        wMat = stageWiseRegress(xArr, yArr, eps, numIt)
-        # print "Stage Wise W:", wMat
-        exit(0)
-        plot.plot(lamMat, wMat, 'yo', 0.03)
-
-        plot.show()
+    OLS(xArr, yArr, xTarget)
+    OLS2(xArr, yArr, xTarget)
+    LWLR(xArr, yArr, xTarget)
+    Ridge(xArr, yArr, xTarget)
+    StageWiseRegress(xArr, yArr, xTarget)
