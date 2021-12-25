@@ -1,10 +1,5 @@
-import os
-import sys
-import numpy as np
-from numpy import *
-from operator import *
-import matplotlib
 import matplotlib.pyplot as plot
+from numpy import *
 
 
 def file2set(filename):
@@ -332,7 +327,7 @@ def StageWiseRegress(xArr, yArr, xTarget):
 
 if __name__ == "__main__":
     # load data set
-    xArr, yArr = file2set("../testcase/VR-input.txt")
+    xArr, yArr = file2set("../testcase/input/VR-input.txt")
     print(xArr)
     print(yArr)
 

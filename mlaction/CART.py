@@ -1,10 +1,5 @@
-import os
-import sys
-import numpy as np
-from numpy import *
-from operator import *
-import matplotlib
 import matplotlib.pyplot as plot
+from numpy import *
 
 '''
 We define the class to meat OOP,
@@ -181,12 +176,12 @@ if __name__ == "__main__":
     '''
 
     # here we give 2 dataset for demo (2-dimensional data)
-    dataset = loadData("../testcase/CART-input.txt")
+    dataset = loadData("../testcase/input/CART-input.txt")
     dataset = matrix(dataset)
     tree = CART(dataset, regLeaf, regError, (0.5, 4))
     preview(dataset, tree)
 
-    dataset = loadData("../testcase/CART-input2.txt")
+    dataset = loadData("../testcase/input/CART-input2.txt")
     dataset = matrix(dataset)
     tree = CART(dataset, regLeaf, regError, (1, 4))
     preview(dataset, tree)

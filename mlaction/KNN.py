@@ -1,11 +1,7 @@
-import sys
-import os
-from numpy import *
-from operator import *
-import matplotlib
-import matplotlib.pyplot as plot
-from matplotlib import colors
 from collections import defaultdict
+
+import matplotlib.pyplot as plot
+from numpy import *
 
 
 def loadData(filename):
@@ -127,7 +123,7 @@ def preview(sample, label=None):
 
 
 if __name__ == "__main__":
-    matrix, classvec = loadData("../testcase/KNN-input.txt")
+    matrix, classvec = loadData("../testcase/input/KNN-input.txt")
     print(matrix)
     print(classvec)
 

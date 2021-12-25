@@ -1,10 +1,6 @@
-import sys
-import os
 import pprint
+
 from numpy import *
-from operator import *
-import matplotlib
-import matplotlib.pyplot as plot
 
 name_map = {}
 id_map = {}
@@ -247,7 +243,7 @@ def index2name(rules):
 
 
 if __name__ == "__main__":
-    filename = "../testcase/Apriori-input.txt"
+    filename = "../testcase/input/Apriori-input.txt"
     dataset = loadData(filename)
     print(dataset)
 

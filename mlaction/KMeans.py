@@ -1,9 +1,5 @@
-import sys
-import os
-from numpy import *
-from operator import *
-import matplotlib
 import matplotlib.pyplot as plot
+from numpy import *
 
 
 def file2matrix(filename):
@@ -389,7 +385,7 @@ if __name__ == "__main__":
     # print dataset
     # exit(0)
 
-    dataset = file2matrix("../testcase/KMeans-input.txt")
+    dataset = file2matrix("../testcase/input/KMeans-input.txt")
     # print dataset[0]
 
     '''

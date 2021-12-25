@@ -1,10 +1,6 @@
-import sys
-import os
-from numpy import *
-from operator import *
-import matplotlib
-import matplotlib.pyplot as plot
 from math import log
+
+from numpy import *
 
 
 def loadData(filename):
@@ -103,7 +99,7 @@ def preview_tree(index, label):
 
 
 if __name__ == "__main__":
-    sample, classvec = loadData("../testcase/ID3-input.txt")
+    sample, classvec = loadData("../testcase/input/ID3-input.txt")
     print("sample", sample)
     print("classification", classvec)
     # preview(matrix)
