@@ -225,7 +225,7 @@ def FPGrowth(dataset, minSup=1):
 
 if __name__ == "__main__":
 
-    filename = "../testcase/input/FPGrowth-input.txt"
+    filename = "testcase/input/FPGrowth.txt"
     dataset = loadData(filename)
     print(dataset)
     newdata = {}

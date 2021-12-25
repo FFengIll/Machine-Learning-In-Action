@@ -123,7 +123,7 @@ def preview(sample, label=None):
 
 
 if __name__ == "__main__":
-    matrix, classvec = loadData("../testcase/input/KNN-input.txt")
+    matrix, classvec = loadData("testcase/input/KNN.txt")
     print(matrix)
     print(classvec)
 

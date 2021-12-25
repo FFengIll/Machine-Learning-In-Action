@@ -243,7 +243,7 @@ def index2name(rules):
 
 
 if __name__ == "__main__":
-    filename = "../testcase/input/Apriori-input.txt"
+    filename = "testcase/input/Apriori.txt"
     dataset = loadData(filename)
     print(dataset)
 
