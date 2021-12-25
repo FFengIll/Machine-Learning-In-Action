@@ -3,7 +3,7 @@
 # Abstract
 A note from **Machine Learning in Action**.
 
-Context may not follow the list, and English go ahead Chinese.
+Context may not follow the list, and English go ahead Chinese.
 
 本文参考文献：《机器学习实战》。
 
@@ -61,7 +61,7 @@ It will calculate the **Shannon Entropy** to get the best features with the best
 ID3算法是用于决策树的一种贪心算法。
 
 该算法通过计算香农信息熵来获取最优的特征，从而对数据进行分类。
-所谓最优特征，即是在所有特征中，能够得到最优信息增益的一个。
+所谓最优特征，即在所有特征中，能够得到最优信息增益的一个。
 
 PS：香农熵越大，意味着信息越丰富；
 香农熵越小，则信息越明确。
@@ -94,8 +94,8 @@ but explain the core idea in all of them here.
 
 Whatever the algorithm we use, we just wish to get the trend of the data.
 So we should take care of 2 points: 
-* overfit will give too much info and cause model complex;
-* underfit may lose the accuracy (simple model), then be hard to use.
+* over-fit will give too much info and cause model complex;
+* under-fit may lose the accuracy (simple model), then be hard to use.
 
 线性回归的核心理念是：通过已有数据，获取数据的趋势情况，应用于预测、验证、评估等场景中。
 在线性回归中，需要特别注意两点：
@@ -127,23 +127,23 @@ CART can support the complex data (global non-linear but local linear) well and 
 And here we give it:
 * find the best value to do the split
 	* traverse all features
-	* for each features, get the feasible value as a split set
+	* for each feature, get the feasible value as a split set
 	* for each split value in the split set, try to split and compute the error of subset
 	* if the sum of the 2 subset error is less than the origin one, update the status
 * then we have the best split feature and value, so split the dataset into 2 subsets with it
-* do the find and split the new set recursively. The terminate is any of the conditions bellow: (avoid overfitting)
+* do the find and split the new set recursively. The terminate is any of the conditions bellow: (avoid over-fitting)
 	* error decline is not obvious, aka under **tolerance error**.
 	* the subset is under **tolerance scale** (aka number of sample).
 * then we have the CART of the dataset
 
-CART work well, but it often cause overfitting when the tree nodes are to many, so we need pruning.
-Here comes 2 ways to do it: prepruning and postpruning.
+CART work well, but it often causes over-fitting when the tree nodes are to many, so we need pruning.
+Here comes 2 ways to do it: pre-pruning and post-pruning.
 
-The conditions above are prepruning:
+The conditions above are pre-pruning:
 * if error decline little, the split can help little;
 * if samples are not enough, the regression will not work well.
 
-And we can use testing set and training set to complete cross validation as postpruning:
+And we can use testing set and training set to complete cross validation as post-pruning:
 
 分类回归树（CART）采用了数据集划分的思想，来对数据集进行分类以用于回归，即：
 将数据集划分为多个简易的，可线性回归的子集，进而进行局部的线性回归。
@@ -175,7 +175,7 @@ The main k-means algorithm is shown bellow:
 * re-calculate the centroids according to the clusters
 * go on loop until the clusters become stable (no change) 
 
-PS: we can choose the distances calculation method, 
+PS: we can choose the distance calculation method, 
 but it will significantly influence the algorithm (i.e. it is the core).
 
 K-均值聚类算法属于聚类算法，其核心思想是使用质心来代表整个簇的数据，即每个簇中的数据都会归属于一个质心。
@@ -197,7 +197,7 @@ we will try to do Bisecting in each loop but directly output k centroids.
 In each loop, we will choose the best Bisecting which will decrease the global SSE,
 and accept this Bisecting in the loop until we get K clusters.
 
-Futhermore, the SSE is the sum of squared error, which reflects the quality and accuracy (we can compute it with different methods).
+Furthermore, the SSE is the sum of squared error, which reflects the quality and accuracy (we can compute it with different methods).
 
 二分K均值算法是对K均值的一种改进：并非直接求解K个质心，而是每次选取一个簇，
 并对簇进行二分（即进行k=2的k均值聚类）；通过遍历当前所有簇，找到能够使得SSE最小化的二分，
@@ -217,7 +217,7 @@ We always wanna know the **_implicit_** relationship between things, especially 
 In Apriori, we generally follow the steps:
 * find the set of high frequency (we call the frequency as support), meanwhile, we will calculate the support value.
 	* support is easy to calculate: occurrences of the set / total data items, aka the frequency of the set.
-	* if the the data item include the set, we say the set occurrents.
+	* if the data item include the set, we say the set occurrences.
 	* (optimization) if the set is non-frequent, its superset must be non-frequent too.
 	* (optimization) save the support, it will be used later.
 * find and extract the rules from frequency set, and believe the rules by confidence value
@@ -241,11 +241,11 @@ Apriori算法一般包含两个步骤：
 	* 如：N中，X+Y = N，如果X->Y不可置信, 则 X - delta -> Y + delta 亦不可置信，其中delta属于X。 
 
 ## FP-Growth
-~~(Now the FP-Growth implement is not good, because I meet a trouble when some of the support is equal in the item sort)~~
+~~(Now the FP-Growth implement is not good, because I meet a trouble when some support is equal in the item sort)~~
 
-(I found I have misunderstand the FP-Tree's application - each time we do a new analysis, we should re-build a FP-Tree and scan it in recursion.
+(I found I have misunderstood the FP-Tree's application - each time we do a new analysis, we should re-build a FP-Tree and scan it in recursion.
 That is saying if some item in the FP-Tree may have same support, then the order is undefined, 
-but we can rebuild the tree later to find which one, same upport in last tree, is more frequent)
+but we can rebuild the tree later to find which one, same support in last tree, is more frequent)
 
 FP-Growth is an efficient algorithm to find out the frequent item in the dataset.
 It is different with Apriori, because FP-Growth should and only should scan the dataset twice!
@@ -259,18 +259,18 @@ Then I will introduce FP-Growth in 2 aspects:
 	* Analyse the dataset, get the support (frequency) of each item in each record (the first data scan) 
 	* By the given min support, filter the items
 	* Scan all record and build the FP-Tree (the second data scan).
-		* Fileter and sort the items in record by item support (from large to little) - to avoid divergency (e.g. xyz, zyx may cause trouble without sort)
+		* Fileter and sort the items in record by item support (from large to little) - to avoid divergence (e.g. xyz, zyx may cause trouble without sort)
 		* From the empty tree root node, while scan the record, if the item node exist, update the local support count attribute, else add a new node.  
 		Then we will have all ordered path in the tree.
 		* For some reason, we may build a header table - all item in the header and link to a list which is a link list of the item in the tree.  
-		It will help us to find the items quickly.
+		It will help us find the items quickly.
 	* Now we have the tree and the header table  
 * FP-Growth
-	* If an item is frequent, its prefix in one FP-Tree may be frequent too.  
-	* So we scan from all item (from little to large) - each item is a base pattern and we get its all prefixs as conditional pattern in the tree.
-		* Each time we scan the item, we append it to current set (empty set at init) as a new frequency set, and save it - so we call the process as **_Tree Mine_**.
-		* Then we use conditional pattern to build a new tree - FP conditional tree (we have min support!)
-		* If the tree is not empty, go on scan and mine the frequency set. (**_It is a recursion_**) 
+    * If an item is frequent, its prefix in one FP-Tree may be frequent too.  
+    * We scan from all item (from little to large) - each item is a base pattern, so we get its all prefixes as conditional pattern in the tree.
+        * Each time we scan the item, we append it to current set (empty set at init) as a new frequency set, and save it - so we call the process as **_Tree Mine_**.
+        * Then we use conditional pattern to build a new tree - FP conditional tree (we have min support!)
+        * If the tree is not empty, go on scan and mine the frequency set. (**_It is a recursion_**) 
 
 
 FP-Growth算法是用于发掘频繁项集的高效算法。
