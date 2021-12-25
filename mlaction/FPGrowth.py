@@ -1,11 +1,3 @@
-import sys
-import os
-from numpy import *
-from operator import *
-import matplotlib
-import matplotlib.pyplot as plot
-
-
 def loadData(filename):
     dataset = []
 
@@ -233,7 +225,7 @@ def FPGrowth(dataset, minSup=1):
 
 if __name__ == "__main__":
 
-    filename = "FPGrowth-input.txt"
+    filename = "../testcase/FPGrowth-input.txt"
     dataset = loadData(filename)
     print(dataset)
     newdata = {}

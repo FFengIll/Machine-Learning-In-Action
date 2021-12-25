@@ -181,12 +181,12 @@ if __name__ == "__main__":
     '''
 
     # here we give 2 dataset for demo (2-dimensional data)
-    dataset = loadData("CART-input.txt")
+    dataset = loadData("../testcase/CART-input.txt")
     dataset = matrix(dataset)
     tree = CART(dataset, regLeaf, regError, (0.5, 4))
     preview(dataset, tree)
 
-    dataset = loadData("CART-input2.txt")
+    dataset = loadData("../testcase/CART-input2.txt")
     dataset = matrix(dataset)
     tree = CART(dataset, regLeaf, regError, (1, 4))
     preview(dataset, tree)

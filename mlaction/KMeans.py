@@ -389,7 +389,7 @@ if __name__ == "__main__":
     # print dataset
     # exit(0)
 
-    dataset = file2matrix("KMeans-input.txt")
+    dataset = file2matrix("../testcase/KMeans-input.txt")
     # print dataset[0]
 
     '''

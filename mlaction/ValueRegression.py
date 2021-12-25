@@ -332,7 +332,7 @@ def StageWiseRegress(xArr, yArr, xTarget):
 
 if __name__ == "__main__":
     # load data set
-    xArr, yArr = file2set("VR-input.txt")
+    xArr, yArr = file2set("../testcase/VR-input.txt")
     print(xArr)
     print(yArr)
 

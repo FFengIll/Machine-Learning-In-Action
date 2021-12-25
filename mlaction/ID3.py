@@ -103,7 +103,7 @@ def preview_tree(index, label):
 
 
 if __name__ == "__main__":
-    sample, classvec = loadData("ID3-input.txt")
+    sample, classvec = loadData("../testcase/ID3-input.txt")
     print("sample", sample)
     print("classification", classvec)
     # preview(matrix)
